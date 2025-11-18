@@ -1,5 +1,3 @@
-@overide 
-
 from sage.crypto.public_key.key_exchange import KeyExchange
 class SIDH(keyExchange)
     def __init__(self, p, e_A, e_B, E, P_A, P_B, Q_A, Q_B):
@@ -11,7 +9,7 @@ class SIDH(keyExchange)
 		self._P_B = P_B
 		self._Q_A = Q_A
 		self._Q_B = Q_B
-		
+	
 	def alice_secret_key(self): BUT WHAT ABOUT THE FACT THAT I NEED e_A AND e_B?
 		k_A = randint(0, self._e_A)
 		return k_A
