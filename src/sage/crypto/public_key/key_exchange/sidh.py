@@ -10,7 +10,7 @@ class SIDH(keyExchange)
 		self._Q_A = Q_A
 		self._Q_B = Q_B
 	
-	def alice_secret_key(self): BUT WHAT ABOUT THE FACT THAT I NEED e_A AND e_B?
+	def alice_secret_key(self): 
 		k_A = randint(0, self._e_A)
 		return k_A
 	
