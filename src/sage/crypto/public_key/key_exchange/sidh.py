@@ -1,5 +1,5 @@
 from sage.crypto.public_key.key_exchange import KeyExchange
-class SIDH(keyExchange)
+class SIDH(keyExchange):
     def __init__(self, p, e_A, e_B, E, P_A, P_B, Q_A, Q_B):
         self._p = p
         self._e_A = e_A
