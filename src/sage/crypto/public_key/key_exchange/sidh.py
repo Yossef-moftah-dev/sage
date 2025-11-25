@@ -1,7 +1,6 @@
 import random
 
 from sage.crypto.public_key.key_exchange.key_exchange_base import KeyExchangeBase
-
 from sage.rings.integer import Integer
 from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
 
