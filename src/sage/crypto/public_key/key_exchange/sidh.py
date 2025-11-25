@@ -22,16 +22,16 @@ class SIDH(keyExchange):
         S_A = self._P_A + alice_secret_key * self._Q_A
         phi_A = EllipticCurveIsogeny(self._E, S_A)
         E_A = phi_A.codomain()
-        P_B1 = phi_A(self._P_A)
-        Q_B1 = phi_A(self._Q_A)
+        P_B1 = phi_A(self._P_B)
+        Q_B1 = phi_A(self._Q_B)
         return (E_A, P_B1, Q_B1)
     
     def bob_public_key(self, bob_secret_key):
         S_B = self._P_B + bob_secret_key * self._Q_B
         phi_B = EllipticCurveIsogeny(self._E, S_B)
         E_B = phi_B.codomain()
-        P_A1 = phi_B(self._P_B)
-        Q_A1 = phi_B(self._Q_B)
+        P_A1 = phi_B(self._P_A)
+        Q_A1 = phi_B(self._Q_A)
         return (E_B, P_A1, Q_A1)
     
     def alice_compute_shared_secret(self, alice_secret_key, bob_public_key):
