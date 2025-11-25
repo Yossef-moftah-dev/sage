@@ -30,8 +30,8 @@ class SIDH(keyExchange):
         S_B = self._P_B + bob_secret_key * self._Q_B
         phi_B = EllipticCurveIsogeny(self._E, S_B)
         E_B = phi_B.codomain()
-        P_A1 = phi_A(self._P_B)
-        Q_A1 = phi_A(self._Q_B)
+        P_A1 = phi_B(self._P_B)
+        Q_A1 = phi_B(self._Q_B)
         return (E_B, P_A1, Q_A1)
     
     def alice_compute_shared_secret(self, alice_secret_key, bob_public_key):
@@ -49,14 +49,14 @@ class SIDH(keyExchange):
         E_BA = phi_B1.codomain()
         j_B = E_BA.j_invariant()
         return j_B
-        
+    
     def runSIDH(self):
-        k_A = alice_secret_key()
-        k_B = bob_secret_key()
-        alice_public_key = alice_public_key(self._e_A)
-        bob_public_key = bob_public_key(self._e_B)
-        j_A = alice_compute_shared_secret(alice_secret_key, bob_public_key)
-        j_B = bob_compute_shared_secret(bob_secret_key, alice_public_key)
+        alice_secret_key = self.alice_secret_key()
+        bob_secret_key = self.bob_secret_key()
+        alice_public_key = self.alice_public_key(alice_secret_key)
+        bob_public_key = self.bob_public_key(bob_secret_key)
+        j_A = self.alice_compute_shared_secret(alice_secret_key, bob_public_key)
+        j_B = self.bob_compute_shared_secret(bob_secret_key, alice_public_key)
         if j_A == j_B:
             return "Completed"
         else:
@@ -77,38 +77,11 @@ class SIDH(keyExchange):
         S_A1 = P_A1 + alice_secret_key * Q_A1
         phi_A1 = EllipticCurveIsogeny(E_B, S_A1)
         return phi_A1
-        
+    
     def bob_second_secret_isogeny(self, bob_secret_key, alice_public_key):
         (E_A, P_B1, Q_B1) = alice_public_key
         S_B1 = P_B1 + bob_secret_key * Q_B1
         phi_B1 = EllipticCurveIsogeny(E_A, S_B1)
         return phi_B1
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
