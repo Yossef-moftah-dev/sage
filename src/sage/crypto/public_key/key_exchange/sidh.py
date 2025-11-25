@@ -78,18 +78,6 @@ class SIDH(KeyExchangeBase):
         j_B = E_BA.j_invariant()
         return j_B
     
-    def runSIDH(self):
-        alice_secret_key = self.alice_secret_key()
-        bob_secret_key = self.bob_secret_key()
-        alice_public_key = self.alice_public_key(alice_secret_key)
-        bob_public_key = self.bob_public_key(bob_secret_key)
-        j_A = self.alice_compute_shared_secret(alice_secret_key, bob_public_key)
-        j_B = self.bob_compute_shared_secret(bob_secret_key, alice_public_key)
-        if j_A == j_B:
-            return "Completed"
-        else:
-            return "Error Occured"
-    
     def alice_first_secret_isogeny(self, alice_secret_key):
         S_A = self._P_A + alice_secret_key * self._Q_A
         phi_A = EllipticCurveIsogeny(self._E, S_A)
