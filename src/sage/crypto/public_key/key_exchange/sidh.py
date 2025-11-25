@@ -1,5 +1,34 @@
-from sage.crypto.public_key.key_exchange import KeyExchange
-class SIDH(keyExchange):
+import random
+
+from sage.crypto.public_key.key_exchange.key_exchange_base import KeyExchangeBase
+
+from sage.rings.integer import Integer
+from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
+
+
+class SIDH(KeyExchangeBase):
+    """
+    Supersingular isogeny Diffie-Hellman key exchange.
+
+    TODO: Cite Costello paper for exampe
+    
+    TESTS:
+
+    sage: from sage.crypto.public_key.key_exchange.sidh import SIDH
+    sage: e_A = 4
+    sage: e_B = 3
+    sage: p = 2^e_A * 3^e_B - 1
+    sage: K.<i> = GF(p^2, modulus=x^2 + 1)
+    sage: a0 = 329 * i + 423
+    sage: E = EllipticCurve(K, [0, a0, 0, 1, 0])
+    sage: P_A = E(100 * i + 248, 304 * i + 199)
+    sage: Q_A = E(426 * i + 394, 51 * i + 79)
+    sage: P_B = E(358 * i + 275, 410 * i + 104)
+    sage: Q_B = E(20 * i + 185, 281 * i + 239)
+    sage: toy_sidh = SIDH(p, e_A, e_B, E, P_A, P_B, Q_A, Q_B)
+    sage: TestSuite(toy_sidh).run()
+    """
+
     def __init__(self, p, e_A, e_B, E, P_A, P_B, Q_A, Q_B):
         self._p = p
         self._e_A = e_A
@@ -11,12 +40,12 @@ class SIDH(keyExchange):
         self._Q_B = Q_B
     
     def alice_secret_key(self): 
-        k_A = randint(0, self._e_A)
-        return k_A
+        k_A = random.randint(0, self._e_A)
+        return Integer(k_A)
     
     def bob_secret_key(self):
-        k_B = randint(0, self._e_B)
-        return k_B
+        k_B = random.randint(0, self._e_B)
+        return Integer(k_B)
     
     def alice_public_key(self, alice_secret_key):
         S_A = self._P_A + alice_secret_key * self._Q_A
@@ -83,5 +112,3 @@ class SIDH(keyExchange):
         S_B1 = P_B1 + bob_secret_key * Q_B1
         phi_B1 = EllipticCurveIsogeny(E_A, S_B1)
         return phi_B1
-
-
