@@ -1,8 +1,7 @@
-"""
+r"""
 Diffie-Hellman Key Exchange Scheme
 
-This module contains a toy implementation of the Diffie-Hellman key exchange
-scheme.
+Toy implementation of Diffie-Hellman key exchange over finite fields `\Zmod{p}`.
 
 AUTHORS:
 
@@ -11,7 +10,8 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2025 Vincent Macri <vincent.macri@ucalgary.ca>
+#       Copyright (C) 2024 Vincent Macri <vincent.macri@ucalgary.ca>
+#       Copyright (C) 2025 Brian Heckel <heckelbri@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,18 +19,24 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.crypto.public_key.key_exchange.key_exchange_base import (
-    CommutativeKeyExchangeBase,
-)
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+from sage.crypto.public_key.key_exchange.key_exchange_base import CommutativeKeyExchangeBase
 from sage.misc.prandom import randint
 from sage.misc.superseded import experimental
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
 
+if TYPE_CHECKING:
+    from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+    from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 
-class FiniteFieldDH(CommutativeKeyExchangeBase):
+
+class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
+
     @experimental(41218)
-    def __init__(self, p: Integer, generator):
+    def __init__(self, p, generator, proof: bool = True) -> None:
         r"""
         Create an instance of the Diffie-Hellman key exchange scheme using the
         given prime ``p`` and base ``g``.
@@ -40,7 +46,7 @@ class FiniteFieldDH(CommutativeKeyExchangeBase):
         - ``p`` -- prime integer defining the field `\GF{p}` that the key
           exchanges will be performed over, must be at least 5
 
-        - ``g`` -- base for the key exchange, (coerceable to) an element of
+        - ``generator`` -- base for the key exchange, (coerceable to) an element of
           `\GF{p}` from `2` to `p - 2`
 
         - ``proof`` -- (default: ``True``) whether to require a proof that
@@ -61,8 +67,7 @@ class FiniteFieldDH(CommutativeKeyExchangeBase):
 
         EXAMPLES::
 
-            sage: from sage.crypto.public_key.key_exchange.finite_field_dh import FiniteFieldDH
-            sage: DH = FiniteFieldDH(13, 2)
+            sage: DH = key_exchange.FiniteFieldDiffieHellman(13, 2)
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
             See https://github.com/sagemath/sage/issues/41218 for details.
 
@@ -70,9 +75,8 @@ class FiniteFieldDH(CommutativeKeyExchangeBase):
         large prime. This is the prime from the 8192-bit MODP group in RFC 3526
         (see [KK2003]_)::
 
-            sage: from sage.crypto.public_key.key_exchange.finite_field_dh import FiniteFieldDH
             sage: p = 2^8192 - 2^8128 - 1 + 2^64 * (round(2^8062 * pi) + 4743158)
-            sage: DH = FiniteFieldDH(13, 2)
+            sage: DH = key_exchange.FiniteFieldDiffieHellman(13, 2)
             sage: alice_sk = DH.secret_key()
             sage: alice_pk = DH.public_key(alice_sk)
             sage: bob_sk = DH.secret_key()
@@ -84,29 +88,36 @@ class FiniteFieldDH(CommutativeKeyExchangeBase):
 
         TESTS::
 
-            sage: from sage.crypto.public_key.key_exchange.finite_field_dh import FiniteFieldDH
-
-            sage: DH = FiniteFieldDH(5, 3)
+            sage: DH = key_exchange.FiniteFieldDiffieHellman(5, 3)
+            sage: TestSuite(DH).run()
         """
-        self._field = GF(p, impl='modn')
-        self.p = p
-        self.generator = self._field(generator)
+        if p < 5:
+            raise ValueError('p must be at least 5')
 
-    def secret_key(self):
+        self._p = Integer(p)
+        if proof:
+            # The modn implementation checks that ``p`` is prime
+            self._field = GF(self._p, impl='modn')
+        else:
+            with WithProof('arithmetic', False):
+                self._field = GF(self._p, impl='modn')
+
+        self._generator = self._field(generator)
+
+    def secret_key(self) -> IntegerMod_abstract:
         """
         Generate a random Diffie-Hellman secret key.
 
         TESTS:
 
-            sage: from sage.crypto.public_key.key_exchange.finite_field_dh import FiniteFieldDH
-            sage: DH = FiniteFieldDH(7, 2)
+            sage: DH = key_exchange.FiniteFieldDiffieHellman(7, 2)
             sage: keys = [DH.secret_key() for i in range(10)]
             sage: all(2 <= i <= 5 for i in keys)
             True
         """
-        return self._field(randint(2, self.p - 2))
+        return self._field(randint(2, self._p - 2))
 
-    def public_key(self, secret_key):
+    def public_key(self, secret_key) -> IntegerMod_abstract:
         """
         Generate a Diffie-Hellman public key using the given secret key.
 
@@ -116,14 +127,13 @@ class FiniteFieldDH(CommutativeKeyExchangeBase):
 
         EXAMPLES::
 
-            sage: from sage.crypto.public_key.key_exchange.finite_field_dh import FiniteFieldDH
-            sage: DH = FiniteFieldDH(13, 2)
+            sage: DH = key_exchange.FiniteFieldDiffieHellman(13, 2)
             sage: DH.public_key(4)
             3
         """
-        return self.generator ** secret_key
+        return self._generator ** secret_key
 
-    def compute_shared_secret(self, secret_key, public_key):
+    def compute_shared_secret(self, secret_key, public_key) -> IntegerMod_abstract:
         """
         Compute the shared secret using the given public key and secret keys.
 
@@ -135,25 +145,20 @@ class FiniteFieldDH(CommutativeKeyExchangeBase):
 
         EXAMPLES::
 
-            sage: from sage.crypto.public_key.key_exchange.finite_field_dh import FiniteFieldDH
-            sage: DH = FiniteFieldDH(17, 3)
+            sage: DH = key_exchange.FiniteFieldDiffieHellman(17, 3)
             sage: DH.compute_shared_secret(11, 13)
             4
         """
         return self._field(public_key ** secret_key)
 
-    def parameters(self):
+    def parameters(self) -> tuple[FiniteField_prime_modn, IntegerMod_abstract]:
         """
         Returns a list of the prime ``p`` used, the base generator ``g`` and the field used.
 
-        Examples::
+        EXAMPLES::
 
-            sage: from sage.crypto.public_key.key_exchange.finite_field_dh import FiniteFieldDH
-            sage: DH = FiniteFieldDH(17, 3)
-            sage: p = DH.parameters()
-            sage: p[0]
-            17
-            sage: p[2]
-            Finite Field of size 17
+            sage: DH = key_exchange.FiniteFieldDiffieHellman(17, 3)
+            sage: DH.parameters()
+            (Finite Field of size 17, 3)
         """
-        return [self.p, self.generator, self._field]
+        return (self._field, self._generator)
