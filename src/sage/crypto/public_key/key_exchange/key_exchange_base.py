@@ -34,6 +34,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 experimental_warning(41218, "SageMath's key exchange functionality is experimental and might change in the future.")
 
+
 class KeyExchangeBase(SageObject, UniqueRepresentation):
     r"""
     A base class for key exchange schemes.
