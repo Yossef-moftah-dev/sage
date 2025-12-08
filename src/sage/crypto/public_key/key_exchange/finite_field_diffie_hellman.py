@@ -20,22 +20,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from sage.crypto.public_key.key_exchange.key_exchange_base import CommutativeKeyExchangeBase
+from sage.crypto.public_key.key_exchange.key_exchange_base import (
+    CommutativeKeyExchangeBase,
+)
 from sage.misc.prandom import randint
-from sage.misc.superseded import experimental
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
+from sage.structure.proof.proof import WithProof
 
 if TYPE_CHECKING:
-    from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
     from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
+    from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 
 
 class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
 
-    @experimental(41218)
     def __init__(self, p, generator, proof: bool = True) -> None:
         r"""
         Create an instance of the Diffie-Hellman key exchange scheme using the

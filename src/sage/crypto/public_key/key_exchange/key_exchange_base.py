@@ -28,10 +28,11 @@ AUTHORS:
 from abc import abstractmethod
 from typing import Any
 
+from sage.misc.superseded import experimental_warning
 from sage.structure.sage_object import SageObject
-
-from sage.misc.superseded import experimental
 from sage.structure.unique_representation import UniqueRepresentation
+
+experimental_warning(41218, "SageMath's key exchange functionality is experimental and might change in the future.")
 
 class KeyExchangeBase(SageObject, UniqueRepresentation):
     r"""
