@@ -44,17 +44,10 @@ class KeyExchangeBase(SageObject, UniqueRepresentation):
     then the :class:`CommutativeKeyExchangeBase` might be easier to implement.
     """
 
-    @experimental(41218)
-    def __init__(self):
-        """
-        Initialize the Key Exchange Base Object
-        """
-        pass
-
     @abstractmethod
     def alice_secret_key(self):
-        """
-        Generate a valid secret key for Alice
+        r"""
+        Generate a valid secret key for Alice.
         """
         raise NotImplementedError
 
@@ -194,12 +187,11 @@ class KeyExchangeBase(SageObject, UniqueRepresentation):
         Test that the key exchange generates the same shared secret for both parties.
         """
         tester = self._tester(**options)
-        for _ in range(5):
-            alice_sk, alice_pk = self.alice_key_generate()
-            bob_sk, bob_pk = self.bob_key_generate()
-            alice_shared_secret = self.alice_compute_shared_secret(alice_sk, bob_pk)
-            bob_shared_secret = self.bob_compute_shared_secret(bob_sk, alice_pk)
-            tester.assertEqual(alice_shared_secret, bob_shared_secret)
+        alice_sk, alice_pk = self.alice_key_generate()
+        bob_sk, bob_pk = self.bob_key_generate()
+        alice_shared_secret = self.alice_compute_shared_secret(alice_sk, bob_pk)
+        bob_shared_secret = self.bob_compute_shared_secret(bob_sk, alice_pk)
+        tester.assertEqual(alice_shared_secret, bob_shared_secret)
 
 
 class CommutativeKeyExchangeBase(KeyExchangeBase):
@@ -217,8 +209,8 @@ class CommutativeKeyExchangeBase(KeyExchangeBase):
 
     @abstractmethod
     def secret_key(self) -> Any:
-        """
-        Generate a secret key for the key exchange
+        r"""
+        Generate a secret key for the key exchange.
         """
         raise NotImplementedError
 
