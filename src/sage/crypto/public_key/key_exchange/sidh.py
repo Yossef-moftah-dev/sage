@@ -9,9 +9,9 @@ class SIDH(KeyExchangeBase):
     """
     Supersingular isogeny Diffie-Hellman key exchange.
 
-    TODO: Cite Costello paper for exampe
+    TODO: Cite Costello paper for example
 
-    TESTS:
+    TESTS::
 
         sage: e_A = 4
         sage: e_B = 3
