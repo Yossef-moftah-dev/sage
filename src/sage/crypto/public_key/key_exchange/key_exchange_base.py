@@ -25,13 +25,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Any
 
+from sage.misc.superseded import experimental_warning
 from sage.structure.sage_object import SageObject
 
+experimental_warning(41218, "SageMath's key exchange functionality is experimental and might change in the future.")
 
-class KeyExchangeBase(SageObject, ABC):
+
+class KeyExchangeBase(SageObject):
     r"""
     A base class for key exchange schemes.
 
@@ -122,6 +125,17 @@ class KeyExchangeBase(SageObject, ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def parameters(self) -> tuple:
+        """
+        A list of the public parameters of the key exchange.
+
+        OUTPUT:
+
+        A tuple of public parameters used for the key exchange
+        """
+        raise NotImplementedError
+
     def alice_key_generate(self) -> tuple[Any, Any]:
         r"""
         Generate a valid (secret key, public key) pair for Alice's
@@ -166,6 +180,12 @@ class KeyExchangeBase(SageObject, ABC):
         alice_shared_secret = self.alice_compute_shared_secret(alice_sk, bob_pk)
         assert alice_shared_secret == self.bob_compute_shared_secret(bob_sk, alice_pk)
         return (alice_sk, alice_pk, bob_sk, bob_pk, alice_shared_secret)
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, type(self)) and self.parameters() == other.parameters()
+
+    def __hash__(self) -> int:
+        return hash(self.parameters())
 
     def _test_key_exchange(self, **options):
         r"""
