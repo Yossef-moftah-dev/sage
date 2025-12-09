@@ -30,12 +30,11 @@ from typing import Any
 
 from sage.misc.superseded import experimental_warning
 from sage.structure.sage_object import SageObject
-from sage.structure.unique_representation import UniqueRepresentation
 
 experimental_warning(41218, "SageMath's key exchange functionality is experimental and might change in the future.")
 
 
-class KeyExchangeBase(SageObject, UniqueRepresentation):
+class KeyExchangeBase(SageObject):
     r"""
     A base class for key exchange schemes.
 
@@ -127,15 +126,13 @@ class KeyExchangeBase(SageObject, UniqueRepresentation):
         raise NotImplementedError
 
     @abstractmethod
-    def parameters(self) -> list[Any]:
+    def parameters(self) -> tuple:
         """
-        A list of the public known parameters of the key exchange, either parameters
-        passed in to the constructor of the key exchange or computed during construction
-        of the key exchange
+        A list of the public parameters of the key exchange.
 
         OUTPUT:
 
-        A list of public parameters used for the key exchange
+        A tuple of public parameters used for the key exchange
         """
         raise NotImplementedError
 
@@ -183,6 +180,12 @@ class KeyExchangeBase(SageObject, UniqueRepresentation):
         alice_shared_secret = self.alice_compute_shared_secret(alice_sk, bob_pk)
         assert alice_shared_secret == self.bob_compute_shared_secret(bob_sk, alice_pk)
         return (alice_sk, alice_pk, bob_sk, bob_pk, alice_shared_secret)
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, type(self)) and self.parameters() == other.parameters()
+
+    def __hash__(self, other) -> int:
+        return hash(self.parameters())
 
     def _test_key_exchange(self, **options):
         r"""

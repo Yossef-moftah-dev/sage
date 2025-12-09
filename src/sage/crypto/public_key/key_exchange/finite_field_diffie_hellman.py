@@ -70,8 +70,8 @@ class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
         EXAMPLES::
 
             sage: DH = key_exchange.FiniteFieldDiffieHellman(13, 2)
-            doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See https://github.com/sagemath/sage/issues/41218 for details.
+            doctest:...: FutureWarning: SageMath's key exchange functionality is experimental and might change in the future.
+                         See https://github.com/sagemath/sage/issues/41218 for details.
 
         This is an example of a full key exchange using a cryptographically
         large prime. This is the prime from the 8192-bit MODP group in RFC 3526
