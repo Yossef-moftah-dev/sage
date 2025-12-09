@@ -184,7 +184,7 @@ class KeyExchangeBase(SageObject):
     def __eq__(self, other) -> bool:
         return isinstance(other, type(self)) and self.parameters() == other.parameters()
 
-    def __hash__(self, other) -> int:
+    def __hash__(self) -> int:
         return hash(self.parameters())
 
     def _test_key_exchange(self, **options):
