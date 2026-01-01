@@ -78,12 +78,18 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.coerce_dict import TripleDict
 from sage.structure.dynamic_class import dynamic_class
 from sage.structure.parent import Parent, Set_generic
+from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 
-_cache = TripleDict(weak_values=True)
+_cache: TripleDict[SageObject, SageObject, Category | None, "Homset"] = TripleDict(weak_values=True)
 
 
-def Hom(X, Y, category=None, check=True):
+def Hom[DomainElementT, CodomainElementT](
+    X: DomainElementT,
+    Y: CodomainElementT,
+    category: None | Category = None,
+    check: bool = True,
+) -> "Homset[DomainElementT, CodomainElementT]":
     """
     Create the space of homomorphisms from X to Y in the category ``category``.
 
@@ -576,7 +582,7 @@ def end(X, f):
     return End(X)(f)
 
 
-class Homset(Set_generic):
+class Homset[DomainElementT, CodomainElementT](Set_generic):
     """
     The class for collections of morphisms in a category.
 
