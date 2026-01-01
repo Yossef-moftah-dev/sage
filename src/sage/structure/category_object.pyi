@@ -1,4 +1,5 @@
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 from sage.categories.category import Category
 from sage.rings.ring import Ring

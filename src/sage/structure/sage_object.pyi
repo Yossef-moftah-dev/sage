@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Hashable, Self
+from collections.abc import Hashable
+from typing import Any, Self
 from unittest import TestCase
 
 from sage.categories.category import Category

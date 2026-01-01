@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Iterator, NoReturn
+from collections.abc import Iterator
+from typing import Any, NoReturn
 
 from sage.categories.category import Category
 from sage.categories.commutative_rings import CommutativeRings

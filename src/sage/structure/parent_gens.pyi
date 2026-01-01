@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from types import TracebackType
-from typing import Any, Mapping, Sequence
+from typing import Any
 
 from sage.structure.category_object import NameSpec
 from sage.structure.parent_base import ParentWithBase

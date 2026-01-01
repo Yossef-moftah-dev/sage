@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generic, Literal, Mapping, Self, Sequence, TypeVar
+from collections.abc import Callable, Mapping, Sequence
+from typing import Any, Generic, Literal, Self, TypeVar
 
 from sage.categories.category import Category
 from sage.categories.map import Map
