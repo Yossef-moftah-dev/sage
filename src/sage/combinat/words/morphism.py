@@ -940,22 +940,22 @@ class WordMorphism(SageObject):
             sage: WordMorphism('')*m
             Traceback (most recent call last):
             ...
-            ValueError: the codomain alphabet of the second morphism must be included in the domain alphabet of the first morphism with the same ordering
+            ValueError: codomain alphabet not in domain (same order required)
             sage: m * WordMorphism('')
             WordMorphism:
-            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'), codomain=Words('ba'))
+            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'),
+            ....:                 codomain=Words('ba'))
             sage: s * s
             Traceback (most recent call last):
             ...
-            ValueError: the codomain alphabet of the second morphism must be included in the domain alphabet of the first morphism with the same ordering
+            ValueError: codomain alphabet not in domain (same order required)
         """
-        # Check that other's codomain alphabet is included in self's domain alphabet
-        # with the correct ordering
+        # Check that other's codomain alphabet is included in self's domain
+        # alphabet with the correct ordering.
         if not self._is_alphabet_included_with_order(
                 other.codomain().alphabet(), self.domain().alphabet()):
-            raise ValueError("the codomain alphabet of the second morphism must be "
-                           "included in the domain alphabet of the first morphism "
-                           "with the same ordering")
+            raise ValueError(
+                "codomain alphabet not in domain (same order required)")
         return WordMorphism({key: self(w) for key, w in other._morph.items()},
                             codomain=self.codomain())
 
@@ -994,7 +994,7 @@ class WordMorphism(SageObject):
             sage: n^2
             Traceback (most recent call last):
             ...
-            ValueError: the codomain alphabet of the second morphism must be included in the domain alphabet of the first morphism with the same ordering
+            ValueError: codomain alphabet not in domain (same order required)
         """
         # If exp is not an integer
         if not isinstance(exp, (int, Integer)):
@@ -1215,9 +1215,10 @@ class WordMorphism(SageObject):
         """
         return self.codomain() == self.domain()
 
-    def _is_alphabet_included_with_order(self, source_alphabet, target_alphabet):
-        """
-        Check if ``source_alphabet`` is included in ``target_alphabet`` with the correct ordering.
+    def _is_alphabet_included_with_order(self, source_alphabet,
+                                         target_alphabet):
+        """Check if ``source_alphabet`` is included in ``target_alphabet``
+        with the correct ordering.
 
         This is a helper function for checking composition validity.
         For composition ``self * other`` to preserve the incidence matrix
@@ -1271,32 +1272,30 @@ class WordMorphism(SageObject):
             return False
 
         if target_alphabet.cardinality() == Infinity:
-            raise NotImplementedError("cannot check alphabet inclusion for infinite alphabets")
+            raise NotImplementedError(
+                "cannot check alphabet inclusion for infinite alphabets")
 
-        # Check that all letters in source_alphabet are in target_alphabet
-        source_list = list(source_alphabet)
-        target_list = list(target_alphabet)
+        # Build positions of target letters once; use it both for membership
+        # testing and for the relative-order check.
+        target_positions = {a: i for i, a in enumerate(target_alphabet)}
+        source_positions = []
+        for a in source_alphabet:
+            pos = target_positions.get(a)
+            if pos is None:
+                return False
+            source_positions.append(pos)
 
-        if not all(a in target_alphabet for a in source_list):
-            return False
-
-        # Check that the relative order is preserved
-        # Find positions of source letters in target
-        target_positions = {letter: i for i, letter in enumerate(target_list)}
-        source_positions = [target_positions[letter] for letter in source_list]
-
-        # Check if positions are in increasing order
-        return all(source_positions[i] < source_positions[i+1]
-                   for i in range(len(source_positions)-1))
+        return all(p < q for p, q in zip(source_positions,
+                         source_positions[1:]))
 
     def is_self_composable(self):
         r"""
         Return whether the codomain of ``self`` is contained in the domain
         with the correct ordering.
 
-        For a morphism to be self-composable (i.e., ``self * self`` to be valid),
-        the codomain alphabet must be included in the domain alphabet with the
-        same relative ordering of letters.
+        For a morphism to be self-composable (i.e., ``self * self`` to be
+        valid), the codomain alphabet must be included in the domain alphabet
+        with the same relative ordering of letters.
 
         EXAMPLES::
 
@@ -1308,7 +1307,8 @@ class WordMorphism(SageObject):
 
         Check that alphabet ordering matters::
 
-            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'), codomain=Words('ba'))
+            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'),
+            ....:                 codomain=Words('ba'))
             sage: s.is_self_composable()
             False
         """
