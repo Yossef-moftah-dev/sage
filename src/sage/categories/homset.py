@@ -87,7 +87,7 @@ _cache: TripleDict[SageObject, SageObject, Category | None, "Homset"] = TripleDi
 def Hom[DomainElementT, CodomainElementT](
     X: DomainElementT,
     Y: CodomainElementT,
-    category: None | Category = None,
+    category: Category | None = None,
     check: bool = True,
 ) -> "Homset[DomainElementT, CodomainElementT]":
     """

@@ -17,23 +17,23 @@ class ParentWithGens(ParentWithBase):
     def __init__(
         self,
         base: Any,
-        names: NameSpec = ...,
-        normalize: bool = ...,
-        category: Any | None = ...,
+        names: NameSpec = None,
+        normalize: bool = True,
+        category: Any | None = None,
     ) -> None: ...
     def ngens(self) -> int: ...
-    def gen(self, i: int = ...) -> Any: ...
+    def gen(self, i: int = 0) -> Any: ...
     def gens(self) -> tuple[Any, ...]: ...
-    def _assign_names(self, names: NameSpec = ..., normalize: bool = ...) -> None: ...
+    def _assign_names(self, names: NameSpec = None, normalize: bool = True) -> None: ...
     def __getstate__(self) -> dict[str, Any]: ...
     def __setstate__(self, d: Mapping[str, Any]) -> None: ...
     def hom(
         self,
         im_gens: Any,
-        codomain: Any | None = ...,
-        base_map: Any | None = ...,
-        category: Any | None = ...,
-        check: bool = ...,
+        codomain: Any | None = None,
+        base_map: Any | None = None,
+        category: Any | None = None,
+        check: bool = True,
     ) -> Any: ...
 
 class localvars:
@@ -46,8 +46,8 @@ class localvars:
         self,
         obj: ParentWithGens,
         names: NameSpec,
-        latex_names: Sequence[str] | None = ...,
-        normalize: bool = ...,
+        latex_names: Sequence[str] | None = None,
+        normalize: bool = True,
     ) -> None: ...
     def __enter__(self) -> None: ...
     def __exit__(

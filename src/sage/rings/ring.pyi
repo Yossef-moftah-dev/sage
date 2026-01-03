@@ -16,14 +16,12 @@ _CommutativeRings: CommutativeRings
 _Fields: Fields
 
 class Ring(ParentWithGens):
-    _default_category: Category
-
     def __init__(
         self,
         base: Parent[Any] | object,
-        names: NameSpec = ...,
-        normalize: bool = ...,
-        category: Category | None = ...,
+        names: NameSpec = None,
+        normalize: bool = True,
+        category: Category | None = None,
     ) -> None: ...
     def __iter__(self) -> Iterator[Any]: ...
     def __len__(self) -> int: ...
@@ -36,40 +34,44 @@ class Ring(ParentWithGens):
     def order(self) -> int: ...
 
 class CommutativeRing(Ring):
-    _default_category: Category
+    _default_category: Category = _CommutativeRings
 
     def __init__(
         self,
         base_ring: Parent[Any] | object,
-        names: NameSpec = ...,
-        normalize: bool = ...,
-        category: Category | None = ...,
+        names: NameSpec = None,
+        normalize: bool = True,
+        category: Category | None = None,
     ) -> None: ...
     def fraction_field(self) -> Ring: ...
     def extension(
         self,
         poly: object,
-        name: str | None = ...,
-        names: NameSpec = ...,
+        name: str | None = None,
+        names: NameSpec = None,
         **kwds: object,
     ) -> Ring: ...
 
 class IntegralDomain(CommutativeRing):
     _default_category: Category
+    def __init__(self, *args, **kwds) -> None: ...
 
 class NoetherianRing(CommutativeRing):
     _default_category: Category
+    def __init__(self, *args, **kwds) -> None: ...
 
 class DedekindDomain(CommutativeRing):
     _default_category: Category
+    def __init__(self, *args, **kwds) -> None: ...
 
 class PrincipalIdealDomain(CommutativeRing):
     _default_category: Category
+    def __init__(self, *args, **kwds) -> None: ...
 
 def _is_Field(x: object) -> bool: ...
 
 class Field(CommutativeRing):
-    _default_category: Category
+    _default_category: Category = _Fields
 
 class Algebra(Ring):
     def __init__(
