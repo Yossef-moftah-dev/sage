@@ -81,7 +81,7 @@ from sage.structure.parent import Parent, Set_generic
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 
-_cache: TripleDict[SageObject, SageObject, Category | None, "Homset"] = TripleDict(weak_values=True)
+_cache: "TripleDict[SageObject, SageObject, Category | None, Homset]" = TripleDict(weak_values=True)
 
 
 def Hom[DomainElementT, CodomainElementT](
