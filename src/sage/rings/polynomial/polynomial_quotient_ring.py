@@ -327,10 +327,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         sage: P.<x> = QQ[]
         sage: Q = P.quotient(x^2 + 2)
-        sage: "sqrt" in dir(Q)
+        sage: a = Q.random_element()
+        sage: "sqrt" in dir(a)
         True
         sage: TestSuite(Q).run()                                 # needs sage.rings.number_field
-        sage: TestSuite(Q.random_element()).run()
+        sage: TestSuite(a).run()
     """
     Element = PolynomialQuotientRingElement
 
