@@ -279,6 +279,21 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         Univariate Quotient Polynomial Ring in xbar over Ring of integers modulo 8
          with modulus x^2 + 1
 
+    Quotient rings isomorphic to fields are recognised, and an isomorphism can
+    be constructed as follows::
+
+        sage: K.<z> = GF(103^2, modulus=[1, 0, 1])
+        sage: R.<x> = K[]
+        sage: f = R([93, 86*z, 34*z + 95, 66*z + 5, 1])
+        sage: Rf = R.quotient_ring(f)
+        sage: Rf.category().is_subcategory(FiniteFields())
+        True
+        sage: phi_inv, phi, FF = Rf._isomorphic_ring()
+        sage: FF is GF(103^8)
+        True
+        sage: phi_inv(phi(a := Rf.random_element())) == a
+        True
+
     We demonstrate object persistence.
 
     ::
@@ -312,7 +327,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         sage: P.<x> = QQ[]
         sage: Q = P.quotient(x^2 + 2)
-        sage: 'sqrt' in dir(Q.category().element_class)
+        sage: "sqrt" in dir(Q)
         True
         sage: TestSuite(Q).run()                                 # needs sage.rings.number_field
         sage: TestSuite(Q.random_element()).run()
