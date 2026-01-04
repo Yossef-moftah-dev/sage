@@ -368,9 +368,6 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         self.__ring = ring
         self.__polynomial = polynomial
         category = CommutativeAlgebras(ring.base_ring().category()).Quotients().or_subcategory(category)
-        if isinstance(self, PolynomialQuotientRing_field):
-            category &= Fields(ring.base_ring().category())
-
         if self.is_finite():
             # We refine the category for finite quotients.
             # Note that is_finite() is cheap so it does not seem to do a lazy
@@ -2391,6 +2388,7 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
         (34*z2 + 36)*xbar^2 + (67*z2 + 83)*xbar + 79*z2 + 66
     """
     def __init__(self, ring, polynomial, name=None, category=None):
+        category = CommutativeAlgebras(ring.base_ring().category()).Quotients() & Fields()
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
 
     def absolute_degree(self):
