@@ -65,21 +65,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from typing import TYPE_CHECKING
+
 from sage.categories import morphism
 from sage.categories.category import Category, JoinCategory
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.lazy_attribute import lazy_attribute
-
-###################################
-# Use the weak "triple" dictionary
-# introduced in github issue #715
-# with weak values, as introduced in
-# github issue #14159
 from sage.structure.coerce_dict import TripleDict
 from sage.structure.dynamic_class import dynamic_class
 from sage.structure.parent import Parent, Set_generic
-from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+
+if TYPE_CHECKING:
+    from sage.structure.sage_object import SageObject
 
 _cache: "TripleDict[SageObject, SageObject, Category | None, Homset]" = TripleDict(weak_values=True)
 
