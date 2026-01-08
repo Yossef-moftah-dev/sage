@@ -192,11 +192,13 @@ fi
 
 build_sage() {
     # Check for the expected editable meson build directory
-    if [ -f "build/build.ninja" ]; then
-        echo "Building Sage with ninja..."
-        ( cd "$SAGE_ROOT" && ninja -C build ) || exit $?
+    SCRIPT=$(readlink -f "$0") # this shell script
+    SAGE_ROOT=$(dirname "$SCRIPT")/../..
+    if [ -f "$SAGE_ROOT/build/sage-distro/build.ninja" ]; then
+         echo "Building Sage with ninja..."
+       ninja -C $SAGE_ROOT/build/sage-distro || exit $?
     else
-        echo "Error: 'sage -b' is for editable meson-based developer builds." >&2
+        echo "Error: 'sage -b' is for editable sage-distro developer builds." >&2
         echo "Please use 'make' or 'meson' directly for other builds." >&2
         exit 1
     fi
