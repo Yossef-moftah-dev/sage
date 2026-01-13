@@ -4760,7 +4760,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             OverflowError: argument too large for multifactorial
         """
         if k <= 0:
-            raise ValueError("multifactorial only defined for nonpositive k")
+            raise ValueError("multifactorial only defined for positive k")
 
         if not mpz_fits_slong_p(self.value):
             raise OverflowError("argument too large for multifactorial")
