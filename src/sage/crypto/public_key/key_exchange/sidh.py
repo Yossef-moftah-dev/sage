@@ -412,7 +412,7 @@ class SIDH(KeyExchangeBase):
         - ``start_curve`` -- the starting curve
         - ``secret_key`` -- the secret key
         - ``P`` -- first basis point
-        - ``P`` -- second basis point
+        - ``Q`` -- second basis point
 
         OUTPUT:
 
