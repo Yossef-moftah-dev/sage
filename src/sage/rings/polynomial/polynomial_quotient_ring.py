@@ -2375,23 +2375,23 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
         True
     """
     def __init__(self, ring, polynomial, name=None, category=None):
-    r"""
-    Initialize ``self``.
+        r"""
+        Initialize ``self``.
 
-    TESTS:
+        TESTS:
 
-    The category is set correctly on initialization and member methods are
-    inherited correctly::
+        The category is set correctly on initialization and member methods are
+        inherited correctly::
 
-        sage: R.<x> = GF(103)[]
-        sage: f = R.irreducible_element(3, algorithm="random")
-        sage: S = R.quo(f)
-        sage: S.category().is_subcategory(FiniteFields())
-        True
-        sage: a = S.random_element()^2
-        sage: (a.sqrt())^2 == a
-        True
-    """
+            sage: R.<x> = GF(103)[]
+            sage: f = R.irreducible_element(3, algorithm="random")
+            sage: S = R.quo(f)
+            sage: S.category().is_subcategory(FiniteFields())
+            True
+            sage: a = S.random_element()^2
+            sage: (a.sqrt())^2 == a
+            True
+        """
         category = CommutativeAlgebras(ring.base_ring().category()).Quotients() & Fields()
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
 
