@@ -2373,10 +2373,14 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
         True
         sage: loads(xbar.dumps()) == xbar
         True
+    """
+    def __init__(self, ring, polynomial, name=None, category=None):
+    r"""
+    Initialize ``self``.
 
     TESTS:
 
-    The category is set correctly on initialisation and member methods are
+    The category is set correctly on initialization and member methods are
     inherited correctly::
 
         sage: R.<x> = GF(103)[]
@@ -2384,11 +2388,10 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
         sage: S = R.quo(f)
         sage: S.category().is_subcategory(FiniteFields())
         True
-        sage: a = S.random_element()
-        sage: (a^2).sqrt()  # random
-        (34*z2 + 36)*xbar^2 + (67*z2 + 83)*xbar + 79*z2 + 66
+        sage: a = S.random_element()^2
+        sage: (a.sqrt())^2 == a
+        True
     """
-    def __init__(self, ring, polynomial, name=None, category=None):
         category = CommutativeAlgebras(ring.base_ring().category()).Quotients() & Fields()
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
 
