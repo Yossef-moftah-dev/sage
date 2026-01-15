@@ -34,6 +34,7 @@ from sage.structure.sequence import Sequence
 # Projective varieties
 # --------------------
 
+
 class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
     """
     A rational point of weighted projective space over a ring.
@@ -106,7 +107,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 raise ValueError("cannot validate point over a ring that is not an integral domain, "
                                  "pass check=False to construct the point")
             v = Sequence(v, R)
-            if len(v) == d-1:     # very common special case
+            if len(v) == d - 1:  # very common special case
                 v.append(R.one())
 
             # (0 : 0 : ... : 0) is not a valid (weighted) projective point
