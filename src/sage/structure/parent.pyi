@@ -50,9 +50,9 @@ class Parent[ElementT](CategoryObject):
     def __make_element_class__(
         self,
         cls: type[ElementT],
-        name: str | None = ...,
-        module: str | None = ...,
-        inherit: bool | None = ...,
+        name: str | None = None,
+        module: str | None = None,
+        inherit: bool | None = None,
     ) -> type[ElementT]: ...
     def _set_element_constructor(self) -> None: ...
     def category(self) -> Category: ...
