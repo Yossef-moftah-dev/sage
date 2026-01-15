@@ -307,7 +307,7 @@ class Gamma_class(CongruenceSubgroup):
         return MatrixGroup([matrix(Zmod(self.level()), 2, 2, 1)])
 
 
-def _lift_pair(U, V, N):
+def _lift_pair(U, V, N) -> tuple:
     r"""
     Utility function. Given integers ``U, V, N``, with `N \ge 1` and `{\rm
     gcd}(U, V, N) = 1`, return a pair `(u, v)` congruent to `(U, V) \bmod N`,
@@ -324,6 +324,9 @@ def _lift_pair(U, V, N):
         sage: from sage.modular.arithgroup.congroup_gamma import _lift_pair
         sage: _lift_pair(2,4,7)
         (9, 4)
+
+    TESTS::
+
         sage: _lift_pair(2,4,8) # don't do this
         Traceback (most recent call last):
         ...
@@ -332,12 +335,11 @@ def _lift_pair(U, V, N):
     u = U % N
     v = V % N
     if v == 0:
-        if u == 1 or u == N-1:
+        if u == 1 or u == N - 1:
             return (1, 0)
-        else:
-            v = N
+        v = N
     while gcd(u, v) > 1:
-        u = u+N
-        if u > N*v:
+        u += N
+        if u > N * v:
             raise ValueError("(U, V, N) must be coprime")
     return (u, v)
