@@ -2663,26 +2663,26 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             sage: s.simplest_rational()
             Traceback (most recent call last):
             ...
-            NotImplementedError:
+            NotImplementedError
             sage: s=RealSet((0, 1));  s
             (0, 1)
             sage: s.simplest_rational()
             Traceback (most recent call last):
             ...
-            NotImplementedError:
+            NotImplementedError
             sage: s=RealSet();  s
             {}
             sage: s.simplest_rational()
             Traceback (most recent call last):
             ...
-            EmptySetError:
+            EmptySetError
         """
 
         if self.is_empty():
             raise EmptySetError
 
-        from sage.rings.real_mpfi import RealIntervalField
         from sage.rings.rational_field import QQ
+        from sage.rings.real_mpfi import RealIntervalField
 
         RIF = RealIntervalField()
         candidates = []
