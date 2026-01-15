@@ -31,6 +31,7 @@ extend-ignore = [
   "E226",    # 29323 failures, could be autofixed but would change too many files for one PR
   "F401",    # 583 failures
   "I001",    # 2888 failures
+  "PLC0415", # 10515 failures, the ideal fix requires PEP 810
 
   # The remaining failing rules were in ruff preview mode only when added to this file.
   "PLW3201",

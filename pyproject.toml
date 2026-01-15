@@ -265,10 +265,6 @@ ignore = [
   "PLR2004", # Comparison to magic values - better enforced through code review process. 
   "PLW1641", # __eq__ without __hash__ - implementations of equivalence classes may have a well-defined notion of equality without a well-defined canonical representation that can be used to compute a hash
 
-  # Imports at top-level of file - we can't follow this because we intentionally defer imports for various reasons.
-  # maybe once we can use PEP 810 this can be fixed.
-  "PLC0415",
-
   # Module level import not at top of file.
   # ruff is not aware of our lazy_imports, we may be able to remove this ignore after adopting PEP 810
   "E402",
