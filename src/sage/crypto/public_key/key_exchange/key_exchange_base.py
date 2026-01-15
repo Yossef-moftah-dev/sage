@@ -224,7 +224,7 @@ class KeyExchangeBase(SageObject):
     def __hash__(self) -> int:
         return hash(self.parameters())
 
-    def _test_key_exchange(self, **options):
+    def _test_key_exchange(self, **options) -> None:
         r"""
         Test that the key exchange generates the same shared secret for both parties.
         """
