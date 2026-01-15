@@ -64,6 +64,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
@@ -77,17 +78,20 @@ from sage.structure.parent import Parent, Set_generic
 from sage.structure.unique_representation import UniqueRepresentation
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from sage.rings.ring import Ring
     from sage.structure.sage_object import SageObject
 
-_cache: "TripleDict[SageObject, SageObject, Category | None, Homset]" = TripleDict(weak_values=True)
+_cache: TripleDict[SageObject, SageObject, Category | None, Homset] = TripleDict(weak_values=True)
 
 
-def Hom[DomainElementT, CodomainElementT](
+def Hom[DomainElementT: Parent, CodomainElementT: Parent](
     X: DomainElementT,
     Y: CodomainElementT,
     category: Category | None = None,
     check: bool = True,
-) -> "Homset[DomainElementT, CodomainElementT]":
+) -> Homset[DomainElementT, CodomainElementT]:
     """
     Create the space of homomorphisms from X to Y in the category ``category``.
 
@@ -580,7 +584,7 @@ def end(X, f):
     return End(X)(f)
 
 
-class Homset[DomainElementT, CodomainElementT](Set_generic):
+class Homset[DomainElementT: Parent, CodomainElementT: Parent](Set_generic):
     """
     The class for collections of morphisms in a category.
 
@@ -611,7 +615,14 @@ class Homset[DomainElementT, CodomainElementT](Set_generic):
         sage: loads(dumps(H)) == H
         True
     """
-    def __init__(self, X, Y, category=None, base=None, check=True) -> None:
+    def __init__(
+        self,
+        X: DomainElementT,
+        Y: CodomainElementT,
+        category: Category | None = None,
+        base: Ring | None = None,
+        check: bool = True,
+    ) -> None:
         r"""
         TESTS::
 
@@ -683,7 +694,12 @@ class Homset[DomainElementT, CodomainElementT](Set_generic):
         Parent.__init__(self, base=base,
                         category=category.Endsets() if X is Y else category.Homsets())
 
-    def __reduce__(self):
+    def __reduce__(
+        self,
+    ) -> tuple[
+        Callable[..., Homset[DomainElementT, CodomainElementT]],
+        tuple[DomainElementT, CodomainElementT, Category, bool],
+    ]:
         """
         Implement pickling by construction for Homsets.
 
@@ -737,7 +753,7 @@ class Homset[DomainElementT, CodomainElementT](Set_generic):
         """
         return Hom, (self._domain, self._codomain, self.__category, False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -747,7 +763,7 @@ class Homset[DomainElementT, CodomainElementT](Set_generic):
         return "Set of Morphisms from {} to {} in {}".format(
             self._domain, self._codomain, self.__category)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         The hash is obtained from domain, codomain and base.
 
@@ -775,7 +791,7 @@ class Homset[DomainElementT, CodomainElementT](Set_generic):
         """
         return True
 
-    def homset_category(self):
+    def homset_category(self) -> Category:
         """
         Return the category that this is a Hom in, i.e., this is typically
         the category of the domain or codomain object.
@@ -1205,7 +1221,7 @@ class Homset[DomainElementT, CodomainElementT](Set_generic):
         """
         return self.identity()
 
-    def domain(self):
+    def domain(self) -> DomainElementT:
         """
         Return the domain of this homset.
 
@@ -1220,7 +1236,7 @@ class Homset[DomainElementT, CodomainElementT](Set_generic):
         """
         return self._domain
 
-    def codomain(self):
+    def codomain(self) -> CodomainElementT:
         """
         Return the codomain of this homset.
 
@@ -1235,7 +1251,7 @@ class Homset[DomainElementT, CodomainElementT](Set_generic):
         """
         return self._codomain
 
-    def reversed(self):
+    def reversed(self) -> Homset[CodomainElementT, DomainElementT]:
         """
         Return the corresponding homset, but with the domain and codomain
         reversed.
