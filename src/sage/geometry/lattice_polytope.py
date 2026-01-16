@@ -3406,7 +3406,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: o.ehrhart_polynomial()
+            sage: o.ehrhart_polynomial()    # optional - latte_int
             4/3*t^3 + 2*t^2 + 8/3*t + 1
         """
         return self.polyhedron().ehrhart_polynomial(*args, **kwds)
