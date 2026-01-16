@@ -1,7 +1,7 @@
 import argparse
 import os
-import sys
 import shlex
+import sys
 
 import pytest
 
@@ -210,10 +210,13 @@ def main():
     else:
         # #31924: Do not run pytest on individual Python files unless
         # they match the pytest file pattern.  However, pass names
-        # of directories. We use 'not os.path.isfile(f)' for this so that
+        # of directories. We use 'not os.path.exists(f)' for this so that
         # we do not silently hide typos.
-        filenames = [f for f in args.filenames
-                        if f.endswith("_test.py") or not os.path.isfile(f)]
+        filenames = [
+            f
+            for f in args.filenames
+            if f.endswith("_test.py") or os.path.isdir(f) or not os.path.exists(f)
+        ]
     if filenames:
         print(f"Running pytest on {filenames} with options {pytest_options}")
         exit_code_pytest = pytest.main(filenames + pytest_options)
