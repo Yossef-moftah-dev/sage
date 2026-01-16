@@ -2390,19 +2390,17 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) + RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
-        """
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: ...
+       """
         if have_same_parent(left, right):
             return (<RealNumber> left)._add_(right)
         try:
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return right.__add__(left)
         elif isinstance(left, RealNumber):
             return Element.__add__(left, right)
@@ -2414,11 +2412,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(2) - RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._sub_(right)
@@ -2426,7 +2422,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return (-right).__add__(left)
         elif isinstance(left, RealNumber):
             return Element.__sub__(left, right)
@@ -2438,11 +2434,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) * RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._mul_(right)
@@ -2450,7 +2444,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right,RealIntervalFieldElement):
             return right.__mul__(left)
         elif isinstance(left, RealNumber):
             return Element.__mul__(left, right)
@@ -2462,11 +2456,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) / RIF(1/2)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for /: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._div_(right)
@@ -2474,7 +2466,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return right.__rtruediv__(left)
         elif isinstance(left, RealNumber):
             return Element.__truediv__(left, right)
