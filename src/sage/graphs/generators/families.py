@@ -28,7 +28,7 @@ from math import sin, cos, pi
 from sage.graphs.graph import Graph
 
 
-def JohnsonGraph(n, k):
+def JohnsonGraph(n, k, immutable=False):
     r"""
     Return the Johnson graph with parameters `n, k`.
 
@@ -37,6 +37,15 @@ def JohnsonGraph(n, k):
     subsets of an `n`-element set; two vertices are adjacent when they meet in a
     `(k-1)`-element set. See the :wikipedia:`Johnson_graph` for more
     information.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer; number of elements of the groundset
+
+    - ``k`` -- nonnegative integer; number of elements of each subset
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -60,25 +69,19 @@ def JohnsonGraph(n, k):
         sage: g.complement().is_isomorphic(graphs.PetersenGraph())
         True
     """
-
-    g = Graph(name=f"Johnson graph with parameters {n},{k}")
     from sage.combinat.subset import Set, Subsets
 
     S = Set(range(n))
-    g.add_vertices(Subsets(S, k))
+    edges = ((sub + Set([i]), sub + Set([j]))
+             for sub in Subsets(S, k - 1)
+             for i, j in combinations(S - sub, 2))
 
-    for sub in Subsets(S, k-1):
-        elem_left = S - sub
-        for i in elem_left:
-            for j in elem_left:
-                if j <= i:
-                    continue
-                g.add_edge(sub + Set([i]), sub + Set([j]))
-
-    return g
+    return Graph([Subsets(S, k), edges], format="vertices_and_edges",
+                 name=f"Johnson graph with parameters {n},{k}",
+                 immutable=immutable)
 
 
-def KneserGraph(n, k):
+def KneserGraph(n, k, immutable=False):
     r"""
     Return the Kneser Graph with parameters `n, k`.
 
@@ -89,6 +92,15 @@ def KneserGraph(n, k):
 
     For example, the Petersen Graph can be defined
     as the Kneser Graph with parameters `5,2`.
+
+    INPUT:
+
+    - ``n`` -- positive integer; number of elements of the groundset
+
+    - ``k`` -- positive integer; number of elements of each subset
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -111,25 +123,20 @@ def KneserGraph(n, k):
         ...
         ValueError: Parameter k should be a strictly positive integer inferior to n
     """
-
     if n <= 0:
         raise ValueError("Parameter n should be a strictly positive integer")
     if k <= 0 or k > n:
         raise ValueError("Parameter k should be a strictly positive integer inferior to n")
 
-    g = Graph(name=f"Kneser graph with parameters {n},{k}")
-
     from sage.combinat.subset import Subsets
+
     S = Subsets(n, k)
-    if 2 * k > n:
-        g.add_vertices(S)
-
     s0 = S.underlying_set()    # {1,2,...,n}
-    for s in S:
-        for t in Subsets(s0.difference(s), k):
-            g.add_edge(s, t)
+    edges = ((s, t) for s in S for t in Subsets(s0.difference(s), k))
 
-    return g
+    return Graph([S, edges], format="vertices_and_edges",
+                 name=f"Kneser graph with parameters {n},{k}",
+                 immutable=immutable)
 
 
 def FurerGadget(k, prefix=None):
