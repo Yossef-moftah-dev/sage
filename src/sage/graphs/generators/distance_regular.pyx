@@ -456,10 +456,15 @@ def DoublyTruncatedWittGraph(immutable=False):
     return G.copy(immutable=True) if immutable else G
 
 
-def distance_3_doubly_truncated_Golay_code_graph():
+def distance_3_doubly_truncated_Golay_code_graph(immutable=False):
     r"""
     Return a distance-regular graph with intersection array
     `[9, 8, 6, 3; 1, 1, 3, 8]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -480,16 +485,12 @@ def distance_3_doubly_truncated_Golay_code_graph():
 
     Description and construction of this graph are taken from [BCN1989]_ p. 364.
     """
-    G = codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph()
-    v = G.vertices(sort=False)[0]
+    P = codes.GolayCode(GF(2), extended=False).punctured([0, 1])
+    G = P.cosetGraph(immutable=True)  # use immutable for faster iterations
+    v = next(G.vertex_iterator())
     it = G.breadth_first_search(v, distance=3, report_distance=True)
-    vertices = [w for (w, d) in it if d == 3]
-
-    edges = [(a, b) for a, b in itertools.combinations(vertices, 2)
-             if G.has_edge((a, b))]
-
-    H = Graph(edges, format='list_of_edges')
-    return H
+    return G.subgraph(vertices=[w for w, d in it if d == 3],
+                      immutable=immutable)
 
 
 def shortened_00_11_binary_Golay_code_graph():
