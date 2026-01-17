@@ -485,8 +485,7 @@ def distance_3_doubly_truncated_Golay_code_graph(immutable=False):
 
     Description and construction of this graph are taken from [BCN1989]_ p. 364.
     """
-    P = codes.GolayCode(GF(2), extended=False).punctured([0, 1])
-    G = P.cosetGraph(immutable=True)  # use immutable for faster iterations
+    G = codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph()
     v = next(G.vertex_iterator())
     it = G.breadth_first_search(v, distance=3, report_distance=True)
     return G.subgraph(vertices=[w for w, d in it if d == 3],
@@ -627,7 +626,7 @@ def vanLintSchrijverGraph(immutable=False):
     from sage.coding.linear_code import LinearCode
 
     one = vector(GF(3), [1, 1, 1, 1, 1, 1])
-    G = LinearCode(Matrix(GF(3), one)).cosetGraph(immutable=True)
+    G = LinearCode(Matrix(GF(3), one)).cosetGraph()
 
     H = G.subgraph(vertices=[v for v in G if v.dot_product(one) in {1, 2}],
                    immutable=immutable)
