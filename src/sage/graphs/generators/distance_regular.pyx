@@ -602,12 +602,17 @@ def shortened_000_111_extended_binary_Golay_code_graph():
     return G
 
 
-def vanLintSchrijverGraph():
+def vanLintSchrijverGraph(immutable=False):
     r"""
     Return the van Lint-Schrijver graph.
 
     The graph is distance-regular with intersection array
     `[6, 5, 5, 4; 1, 1, 2, 6]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -622,14 +627,11 @@ def vanLintSchrijverGraph():
     from sage.coding.linear_code import LinearCode
 
     one = vector(GF(3), [1, 1, 1, 1, 1, 1])
-    G = LinearCode(Matrix(GF(3), one)).cosetGraph()
+    G = LinearCode(Matrix(GF(3), one)).cosetGraph(immutable=True)
 
-    vertices = [v for v in G.vertices(sort=False) if v.dot_product(one) in {1, 2}]
-    edges = [(v, w) for v, w in itertools.combinations(vertices, 2)
-             if G.has_edge((v, w))]
-
-    H = Graph(edges, format='list_of_edges')
-    H.name("Linst-Schrijver graph")
+    H = G.subgraph(vertices=[v for v in G if v.dot_product(one) in {1, 2}],
+                   immutable=immutable)
+    H._name = "Linst-Schrijver graph"
     return H
 
 
