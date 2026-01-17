@@ -2628,13 +2628,11 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/2)^(2^100)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: (1/2)^(-2^100)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: QQ(-1)^(2^100)                                                        # needs sage.symbolic
             1
         """

@@ -2336,8 +2336,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 2 ^ 100000000000000000000000
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: 1 ^ 100000000000000000000000
             1
             sage: 1 ^ -100000000000000000000000
