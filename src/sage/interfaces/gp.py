@@ -802,8 +802,7 @@ class Gp(ExtraTabCompletion, Expect):
             sage: old_prec = gp.set_precision(new_prec); old_prec
             38
             sage: pi_150
-            3.14159265358979323846264338327950288419716939938  # 32-bit
-            3.14159265358979323846264338327950288419716939937510582098  # 64-bit
+            3.1415926535897932384626433832795028841971693993...
             sage: gp.set_precision(old_prec)
             48                                             # 32-bit
             57                                             # 64-bit

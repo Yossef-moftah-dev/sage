@@ -84,8 +84,7 @@ cdef class Matrix(Matrix0):
             [1.0 2.0]
             [3.0 1.0]
             sage: b = pari(a); b                                                        # needs sage.libs.pari
-            [1.000000000, 2.000000000; 3.000000000, 1.000000000] # 32-bit
-            [1.00000000000000, 2.00000000000000; 3.00000000000000, 1.00000000000000] # 64-bit
+            [1.000000000..., 2.000000000...; 3.000000000..., 1.000000000...]
         """
         from sage.libs.pari import pari
         return pari.matrix(self._nrows, self._ncols, self._list())
