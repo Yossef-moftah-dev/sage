@@ -21,6 +21,7 @@ from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
                             t_VECSMALL, t_MAT, t_STR,
                             lg, precp)
 from cypari2.paridecl cimport (
+    avma,
     divisorsu,
     FF_to_FpXQ_i,
     inf_get_sign,

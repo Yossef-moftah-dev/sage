@@ -202,7 +202,7 @@ foreach name, pyx : extension_data_cpp
   elif name == 'polynomial_gf2x'
     deps += [cypari2]
   elif name == 'evaluation_ntl'
-    deps += [ntl, mpfr, mpfi] # Runtime dependencies
+    deps += [ntl, mpfr, mpfi]    # Runtime dependencies
   endif
   py.extension_module(
     name,
