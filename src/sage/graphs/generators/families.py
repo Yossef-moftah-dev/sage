@@ -139,7 +139,7 @@ def KneserGraph(n, k, immutable=False):
                  immutable=immutable)
 
 
-def FurerGadget(k, prefix=None):
+def FurerGadget(k, prefix=None, immutable=False):
     r"""
     Return a Furer gadget of order ``k`` and their coloring.
 
@@ -164,6 +164,9 @@ def FurerGadget(k, prefix=None):
     - ``prefix`` -- prefix of to be appended to each vertex label,
       so as to individualise the returned Furer gadget; must be comparable for
       equality and hashable
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -213,24 +216,25 @@ def FurerGadget(k, prefix=None):
     from itertools import repeat as rep, chain
     if k <= 0:
         raise ValueError("The order of the Furer gadget must be greater than zero")
-    G = Graph()
+
     V_a = list(enumerate(rep('a', k)))
     V_b = list(enumerate(rep('b', k)))
     if prefix is not None:
         V_a = list(zip(rep(prefix, k), V_a))
         V_b = list(zip(rep(prefix, k), V_b))
-    G.add_vertices(V_a)
-    G.add_vertices(V_b)
+
     powerset = list(chain.from_iterable(combinations(range(k), r) for r in range(0, k + 1, 2)))
     if prefix is not None:
-        G.add_edges(chain.from_iterable([((prefix, s), (prefix, (i, 'a'))) for i in s] for s in powerset))
-        G.add_edges(chain.from_iterable([((prefix, s), (prefix, (i, 'b'))) for i in range(k) if i not in s] for s in powerset))
+        E_a = chain.from_iterable([((prefix, s), (prefix, (i, 'a'))) for i in s] for s in powerset)
+        E_b = chain.from_iterable([((prefix, s), (prefix, (i, 'b'))) for i in range(k) if i not in s] for s in powerset)
     else:
-        G.add_edges(chain.from_iterable([(s, (i, 'a')) for i in s] for s in powerset))
-        G.add_edges(chain.from_iterable([(s, (i, 'b')) for i in range(k) if i not in s] for s in powerset))
-    partition = []
-    for i in range(k):
-        partition.append([V_a[i], V_b[i]])
+        E_a = chain.from_iterable([(s, (i, 'a')) for i in s] for s in powerset)
+        E_b = chain.from_iterable([(s, (i, 'b')) for i in range(k) if i not in s] for s in powerset)
+
+    G = Graph([chain(V_a, V_b), chain(E_a, E_b)], format="vertices_and_edges",
+              immutable=immutable)
+
+    partition = [[V_a[i], V_b[i]] for i in range(k)]
     if prefix is not None:
         powerset = [(prefix, s) for s in powerset]
     partition.append(powerset)
