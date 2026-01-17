@@ -447,14 +447,14 @@ class Sandpile(DiGraph):
             all_k_config             -- The constant configuration with all values set to k.
             all_k_div                -- The divisor with all values set to k.
             avalanche_polynomial     -- The avalanche polynomial.
-            betti                    -- The Betti table for the homogeneous toppling ideal.
+            betti                    -- Return the Betti table for the homogeneous toppling ideal.
             betti_complexes          -- The support-complexes with non-trivial homology.
             burning_config           -- The minimal burning configuration.
             burning_script           -- A script for the minimal burning configuration.
             canonical_divisor        -- The canonical divisor.
             dict                     -- A dictionary of dictionaries representing a directed graph.
             genus                    -- The genus: (# non-loop edges) - (# vertices) + 1.
-            groebner                 -- A Groebner basis for the homogeneous toppling ideal.
+            groebner                 -- Return a Groebner basis for the homogeneous toppling ideal.
             group_gens               -- A minimal list of generators for the sandpile group.
             group_order              -- The size of the sandpile group.
             h_vector                 -- The number of superstable configurations in each degree.
@@ -466,7 +466,7 @@ class Sandpile(DiGraph):
             invariant_factors        -- The invariant factors of the sandpile group.
             is_undirected            -- Is the underlying graph undirected?
             jacobian_representatives -- Representatives for the elements of the Jacobian group.
-            laplacian                -- The Laplacian matrix of the graph.
+            laplacian                -- Return the Laplacian matrix of the graph.
             markov_chain             -- The sandpile Markov chain for configurations or divisors.
             max_stable               -- The maximal stable configuration.
             max_stable_div           -- The maximal stable divisor.
@@ -479,7 +479,7 @@ class Sandpile(DiGraph):
             points                   -- Generators for the multiplicative group of zeros of the sandpile ideal.
             postulation              -- The postulation number of the toppling ideal.
             recurrents               -- The recurrent configurations.
-            reduced_laplacian        -- The reduced Laplacian matrix of the graph.
+            reduced_laplacian        -- Return the reduced Laplacian matrix of the graph.
             reorder_vertices         -- A copy of the sandpile with vertex names permuted.
             resolution               -- A minimal free resolution of the homogeneous toppling ideal.
             ring                     -- The ring containing the homogeneous toppling ideal.
