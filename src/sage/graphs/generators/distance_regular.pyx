@@ -493,10 +493,15 @@ def distance_3_doubly_truncated_Golay_code_graph(immutable=False):
                       immutable=immutable)
 
 
-def shortened_00_11_binary_Golay_code_graph():
+def shortened_00_11_binary_Golay_code_graph(immutable=False):
     r"""
     Return a distance-regular graph with intersection array
     `[21, 20, 16, 6, 2, 1; 1, 2, 6, 16, 20, 21]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -528,8 +533,8 @@ def shortened_00_11_binary_Golay_code_graph():
 
     code = LinearCode(Matrix(GF(2), C_basis))
 
-    G = code.cosetGraph()
-    G.name("Shortened 00 11 binary Golay code")
+    G = code.cosetGraph(immutable=immutable)
+    G._name = "Shortened 00 11 binary Golay code"
     return G
 
 
