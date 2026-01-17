@@ -729,9 +729,10 @@ cdef class Matrix(Matrix0):
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]])
-            sage: b.dtype
-            dtype('int32')  # 32-bit
-            dtype('int64')  # 64-bit
+            sage: d32 = numpy.dtype(numpy.int32)
+            sage: d64 = numpy.dtype(numpy.int64)
+            sage: b.dtype in [d32, d64]  # depends on machine bitness
+            True
             sage: b.shape
             (3, 4)
         """

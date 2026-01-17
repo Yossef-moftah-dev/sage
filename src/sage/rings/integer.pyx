@@ -6422,9 +6422,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: import numpy
             sage: numpy.array([1, 2, 3])
             array([1, 2, 3])
-            sage: numpy.array([1, 2, 3]).dtype
-            dtype('int32')                         # 32-bit
-            dtype('int64')                         # 64-bit
+            sage: d32 = numpy.dtype(numpy.int32)
+            sage: d64 = numpy.dtype(numpy.int64)
+            sage: numpy.array([1, 2, 3]).dtype in [d32, d64]
+            True
 
             sage: # needs numpy (this has to be repeated until #36099 is fixed)
             sage: import numpy
