@@ -345,7 +345,7 @@ def CaiFurerImmermanGraph(G, twisted=False):
     return newG, total_partition
 
 
-def EgawaGraph(p, s):
+def EgawaGraph(p, s, immutable=False):
     r"""
     Return the Egawa graph with parameters `p`, `s`.
 
@@ -372,6 +372,9 @@ def EgawaGraph(p, s):
     - ``s`` -- power to which the graph named `X` in the reference
       provided above will be raised
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
+
     OUTPUT:
 
     - ``G`` -- the Egawa graph with parameters (p,s)
@@ -393,26 +396,30 @@ def EgawaGraph(p, s):
     """
     from sage.graphs.generators.basic import CompleteGraph
     from itertools import product, chain, repeat
-    g = Graph(name=f"Egawa Graph with parameters {p},{s}", multiedges=False)
     X = CompleteGraph(4)
     Y = Graph('O?Wse@UgqqT_LUebWkbT_')
-    g.add_vertices(product(*chain(repeat(Y, p), repeat(X, s))))
-    for v in g:
-        for i in range(p):
-            prefix = v[:i]
-            suffix = v[i+1:]
-            for el in Y.neighbor_iterator(v[i]):
-                u = prefix + (el,) + suffix
-                g.add_edge(v, u)
-        for i in range(p, s + p):
-            prefix = v[:i]
-            suffix = v[i+1:]
-            for el in X:
-                if el == v[i]:
-                    continue
-                u = prefix + (el,) + suffix
-                g.add_edge(v, u)
-    return g
+    vertices = list(product(*chain(repeat(Y, p), repeat(X, s))))
+
+    def edges():
+        for v in vertices:
+            for i in range(p):
+                prefix = v[:i]
+                suffix = v[i+1:]
+                for el in Y.neighbor_iterator(v[i]):
+                    u = prefix + (el,) + suffix
+                    yield (v, u)
+            for i in range(p, s + p):
+                prefix = v[:i]
+                suffix = v[i+1:]
+                for el in X:
+                    if el == v[i]:
+                        continue
+                    u = prefix + (el,) + suffix
+                    yield (v, u)
+
+    return Graph([vertices, edges()], format="vertices_and_edges",
+                 name=f"Egawa Graph with parameters {p},{s}",
+                 multiedges=False, immutable=immutable)
 
 
 def HammingGraph(n, q, X=None):
