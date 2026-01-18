@@ -832,12 +832,20 @@ def AztecDiamondGraph(n, immutable=False):
     return H
 
 
-def DipoleGraph(n):
+def DipoleGraph(n, immutable=False):
     r"""
     Return a dipole graph with `n` edges.
 
     A dipole graph is a multigraph consisting of 2 vertices connected with `n`
     parallel edges.
+
+    INPUT:
+
+    - ``n`` -- integer `\geq 0`; the number of parallel edges connecting the 2
+      vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -866,12 +874,20 @@ def DipoleGraph(n):
         Traceback (most recent call last):
         ...
         ValueError: invalid graph description, n should be >= 0
+
+    Check the behavioir of parameter immutable::
+
+        sage: graphs.DipoleGraph(2, immutable=False).is_immutable()
+        False
+        sage: graphs.DipoleGraph(2, immutable=True).is_immutable()
+        True
     """
     # sanity checks
     if n < 0:
         raise ValueError("invalid graph description, n should be >= 0")
 
-    return Graph([[0, 1], [(0, 1)]*n], name="Dipole graph", multiedges=True)
+    return Graph([[0, 1], [(0, 1)]*n], name="Dipole graph",
+                 multiedges=True, immutable=immutable)
 
 
 def BubbleSortGraph(n):
