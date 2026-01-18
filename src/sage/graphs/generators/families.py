@@ -1335,7 +1335,7 @@ def DorogovtsevGoltsevMendesGraph(n, immutable=False):
                  immutable=immutable)
 
 
-def FoldedCubeGraph(n):
+def FoldedCubeGraph(n, immutable=False):
     r"""
     Return the folded cube graph of order `2^{n-1}`.
 
@@ -1347,6 +1347,13 @@ def FoldedCubeGraph(n):
 
     See the :wikipedia:`Folded_cube_graph` for more information.
 
+    INPUT:
+
+    - ``n`` -- integer `\geq 2`; the dimension of the folded cube
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     The folded cube graph of order five is the Clebsch graph::
@@ -1356,11 +1363,8 @@ def FoldedCubeGraph(n):
         sage: fc.is_isomorphic(clebsch)
         True
     """
-    if n < 1:
-        raise ValueError("The value of n must be at least 2")
-
-    g = CubeGraph(n - 1)
-    g.name("Folded Cube Graph")
+    if n < 2:
+        raise ValueError("the value of n must be at least 2")
 
     # Complementing the binary word
     def complement(x):
@@ -1369,11 +1373,12 @@ def FoldedCubeGraph(n):
         x = x.replace('a', '1')
         return x
 
-    for x in g:
-        if x[0] == '0':
-            g.add_edge(x, complement(x))
-
-    return g
+    from itertools import chain
+    H = CubeGraph(n - 1)
+    extra = ((x, complement(x)) for x in H if x[0] == '0')
+    return Graph([H, chain(H.edges(labels=False), extra)],
+                 format="vertices_and_edges", immutable=immutable,
+                 name="Folded Cube Graph")
 
 
 def FriendshipGraph(n):
