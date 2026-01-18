@@ -625,7 +625,7 @@ def BarbellGraph(n1, n2, immutable=False):
     return G
 
 
-def LollipopGraph(n1, n2):
+def LollipopGraph(n1, n2, immutable=False):
     r"""
     Return a lollipop graph with `n_1 + n_2` nodes.
 
@@ -637,6 +637,15 @@ def LollipopGraph(n1, n2):
     graph will be drawn in the lower-left corner with the `n_1`-th node
     at a 45 degree angle above the right horizontal center of the
     complete graph, leading directly into the path graph.
+
+    INPUT:
+
+    - ``n1`` -- integer `\geq 0`; the order of the complete graph
+
+    - ``n2`` -- integer `\geq 0`; the order of the path graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -685,11 +694,12 @@ def LollipopGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(n1 + n2, name="Lollipop graph")
-    G.add_clique(list(range(n1)))
-    G.add_path(list(range(n1, n1 + n2)))
-    if n1 * n2 > 0:
-        G.add_edge(n1 - 1, n1)
+    from itertools import chain
+    K = ((i, j) for i, j in combinations(range(n1), 2))
+    s = 1 if n1 * n2 > 0 else 0  # need edge connecting the clique and the path
+    P = zip(range(n1 - s, n1 + n2 - 1), range(n1 + 1 - s, n1 + n2))
+    G = Graph([range(n1 + n2), chain(K, P)], format="vertices_and_edges",
+              name="Lollipop graph", immutable=immutable)
     if n1 == 1:
         G.set_pos({0: (0, 0)})
     else:
