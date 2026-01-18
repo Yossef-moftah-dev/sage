@@ -1381,7 +1381,7 @@ def FoldedCubeGraph(n, immutable=False):
                  name="Folded Cube Graph")
 
 
-def FriendshipGraph(n):
+def FriendshipGraph(n, immutable=False):
     r"""
     Return the friendship graph `F_n`.
 
@@ -1396,6 +1396,9 @@ def FriendshipGraph(n):
 
     - ``n`` -- positive integer; the number of copies of `C_3` to use in
       constructing `F_n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -1478,15 +1481,17 @@ def FriendshipGraph(n):
     # construct the friendship graph
     if n == 1:
         from sage.graphs.generators.basic import CycleGraph
-        G = CycleGraph(3)
-        G.name("Friendship graph")
+        G = CycleGraph(3, immutable=immutable)
+        G._name = "Friendship graph"
         return G
     # build the edges and position dictionaries
     N = 2 * n + 1           # order of F_n
     center = 2 * n
-    G = Graph(N, name="Friendship graph")
-    for i in range(0, N - 1, 2):
-        G.add_cycle([center, i, i + 1])
+    edges = (e
+             for i in range(0, N - 1, 2)
+             for e in combinations([center, i, i + 1], 2))
+    G = Graph([range(N), edges], format="vertices_and_edges",
+              name="Friendship graph", immutable=immutable)
     G.set_pos({center: (0, 0)})
     G._circle_embedding(list(range(N - 1)), radius=1)
     return G
