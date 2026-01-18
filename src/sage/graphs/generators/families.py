@@ -988,7 +988,7 @@ def BubbleSortGraph(n, immutable=False):
                  immutable=immutable)
 
 
-def chang_graphs():
+def chang_graphs(immutable=False):
     r"""
     Return the three Chang graphs.
 
@@ -996,6 +996,11 @@ def chang_graphs():
     called the Chang graphs. The fourth is the line graph of `K_8`. For more
     information about the Chang graphs, see the :wikipedia:`Chang_graphs` or
     https://www.win.tue.nl/~aeb/graphs/Chang.html.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return
+      immutable or mutable graphs
 
     EXAMPLES: check that we get 4 non-isomorphic s.r.g.'s with the
     same parameters::
@@ -1026,11 +1031,11 @@ def chang_graphs():
         [True, True, True]
     """
     g1 = Graph("[}~~EebhkrRb_~SoLOIiAZ?LBBxDb?bQcggjHKEwoZFAaiZ?Yf[?dxb@@tdWGkwn",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     g2 = Graph("[~z^UipkkZPr_~Y_LOIiATOLBBxPR@`acoojBBSoWXTaabN?Yts?Yji_QyioClXZ",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     g3 = Graph(r"[~~vVMWdKFpV`^UGIaIERQ`\DBxpA@g`CbGRI`AxICNaFM[?fM\?Ytj@CxrGGlYt",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     return [g1, g2, g3]
 
 
