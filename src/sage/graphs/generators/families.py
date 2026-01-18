@@ -979,8 +979,8 @@ def CirculantGraph(n, adjacency, immutable=False):
 
     -  ``adjacency`` -- the list of `j` values
 
-    - ``immutable`` -- boolean (default: ``False``); whether to return
-      immutable or mutable graphs
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, each circulant
@@ -1075,7 +1075,7 @@ def CirculantGraph(n, adjacency, immutable=False):
     return G
 
 
-def CubeGraph(n, embedding=1):
+def CubeGraph(n, embedding=1, immutable=False):
     r"""
     Return the `n`-cube graph, also called the hypercube in `n` dimensions.
 
@@ -1108,6 +1108,9 @@ def CubeGraph(n, embedding=1):
         plane, offering a geometrically consistent visualization.
 
       - ``None`` or ``O`` -- no embedding is provided
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1180,7 +1183,8 @@ def CubeGraph(n, embedding=1):
             p, pn = pn, {}
 
         # construct the graph
-        G = Graph(d, format='dict_of_lists', pos=p, name=f"{n}-Cube")
+        G = Graph(d, format='dict_of_lists', pos=p, name=f"{n}-Cube",
+                  immutable=immutable)
 
     else:
         # construct recursively the adjacency dict
@@ -1201,7 +1205,7 @@ def CubeGraph(n, embedding=1):
             d, dn = dn, {}
 
         # construct the graph
-        G = Graph(d, name=f"{n}-Cube", format='dict_of_lists')
+        G = Graph(d, name=f"{n}-Cube", format='dict_of_lists', immutable=immutable)
 
         if embedding == 2:
             # Orthogonal projection
