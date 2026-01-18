@@ -502,7 +502,7 @@ def HammingGraph(n, q, X=None):
     return g
 
 
-def BarbellGraph(n1, n2):
+def BarbellGraph(n1, n2, immutable=False):
     r"""
     Return a barbell graph with `2 n_1 + n_2` nodes.
 
@@ -518,6 +518,9 @@ def BarbellGraph(n1, n2):
 
     - ``n2`` -- nonnegative integer; the order of the path graph
       connecting the two complete graphs
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
 
     OUTPUT:
 
@@ -609,10 +612,12 @@ def BarbellGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(name="Barbell graph")
-    G.add_clique(list(range(n1)))
-    G.add_path(list(range(n1 - 1, n1 + n2 + 1)))
-    G.add_clique(list(range(n1 + n2, n1 + n2 + n1)))
+    from itertools import chain
+    K1 = ((i, j) for i, j in combinations(range(n1), 2))
+    P = zip(range(n1 - 1, n1 + n2), range(n1, n1 + n2 + 1))
+    K2 =  ((i, j) for i, j in combinations(range(n1 + n2, 2*n1 + n2), 2))
+    G = Graph([range(2*n1 + n2), chain(K1, P, K2)], format="vertices_and_edges",
+              name="Barbell graph", immutable=immutable)
 
     G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
     G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
