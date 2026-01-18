@@ -1908,7 +1908,7 @@ def RoseWindowGraph(n, a, r, immutable=False):
     return G
 
 
-def TabacjnGraph(n, a, b, r):
+def TabacjnGraph(n, a, b, r, immutable=False):
     r"""
     Return a Tabačjn graph with `2n` nodes.
 
@@ -1929,6 +1929,9 @@ def TabacjnGraph(n, a, b, r):
 
     - ``r`` -- integer such that `0 < r < n` and `r \neq n/2` determining how
       inner vertices are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the rose window graphs are
@@ -2005,13 +2008,15 @@ def TabacjnGraph(n, a, b, r):
     if r == n/2:
         raise ValueError("r must be different than n / 2")
 
-    G = Graph(2 * n, name=f"Tabačjn graph (n={n}, a={a}, b={b}, r={r})")
-    for i in range(n):
-        G.add_edge(i, (i + 1) % n)
-        G.add_edge(i, i + n)
-        G.add_edge(i + n, n + (i + r) % n)
-        G.add_edge(i, (i + a) % n + n)
-        G.add_edge(i, (i + b) % n + n)
+    from itertools import chain
+    E1 = ((i, (i + 1) % n) for i in range(n))
+    E2 = ((i, i + n) for i in range(n))
+    E3 = ((i + n, n + (i + r) % n) for i in range(n))
+    E4 = ((i, (i + a) % n + n) for i in range(n))
+    E5 = ((i, (i + b) % n + n) for i in range(n))
+    G = Graph([range(2*n), chain(E1, E2, E3, E4, E5)],
+              format="vertices_and_edges", immutable=immutable,
+              name=f"Tabačjn graph (n={n}, a={a}, b={b}, r={r})")
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2 * n)), radius=0.5, angle=pi/2)
     return G
