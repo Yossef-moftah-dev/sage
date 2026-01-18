@@ -966,7 +966,7 @@ def chang_graphs():
     return [g1, g2, g3]
 
 
-def CirculantGraph(n, adjacency):
+def CirculantGraph(n, adjacency, immutable=False):
     r"""
     Return a circulant graph with `n` nodes.
 
@@ -978,6 +978,9 @@ def CirculantGraph(n, adjacency):
     -  ``n`` -- number of vertices in the graph
 
     -  ``adjacency`` -- the list of `j` values
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return
+      immutable or mutable graphs
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, each circulant
@@ -1064,12 +1067,11 @@ def CirculantGraph(n, adjacency):
     if not isinstance(adjacency, list):
         adjacency = [adjacency]
 
-    G = Graph(n, name=f"Circulant graph ({adjacency})")
+    edges = ((v, (v + j) % n) for v in range(n) for j in adjacency)
+    G = Graph([range(n), edges], format="vertices_and_edges",
+              name=f"Circulant graph ({adjacency})",
+              immutable=immutable)
     G._circle_embedding(list(range(n)))
-
-    for v in G:
-        G.add_edges([(v, (v + j) % n) for j in adjacency])
-
     return G
 
 
