@@ -615,7 +615,7 @@ def BarbellGraph(n1, n2, immutable=False):
     from itertools import chain
     K1 = ((i, j) for i, j in combinations(range(n1), 2))
     P = zip(range(n1 - 1, n1 + n2), range(n1, n1 + n2 + 1))
-    K2 =  ((i, j) for i, j in combinations(range(n1 + n2, 2*n1 + n2), 2))
+    K2 = ((i, j) for i, j in combinations(range(n1 + n2, 2*n1 + n2), 2))
     G = Graph([range(2*n1 + n2), chain(K1, P, K2)], format="vertices_and_edges",
               name="Barbell graph", immutable=immutable)
 
