@@ -1648,7 +1648,7 @@ def GeneralizedPetersenGraph(n, k, immutable=False):
     return G
 
 
-def IGraph(n, j, k):
+def IGraph(n, j, k, immutable=False):
     r"""
     Return an I-graph with `2n` nodes.
 
@@ -1667,6 +1667,9 @@ def IGraph(n, j, k):
 
     - ``k`` -- integer such that `0 < k \leq \lfloor (n-1) / 2 \rfloor`
       determining how inner vertices are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the I-graphs are displayed as an
@@ -1723,11 +1726,13 @@ def IGraph(n, j, k):
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1 <= k <= floor((n - 1) / 2)")
 
-    G = Graph(2 * n, name=f"I-graph (n={n}, j={j}, k={k})")
-    for i in range(n):
-        G.add_edge(i, (i + j) % n)
-        G.add_edge(i, i + n)
-        G.add_edge(i + n, n + (i + k) % n)
+    from itertools import chain
+    E1 = ((i, (i + j) % n) for i in range(n))
+    E2 = ((i, i + n) for i in range(n))
+    E3 = (( i + n, n + (i + k) % n) for i in range(n))
+    G = Graph([range(2*n), chain(E1, E2, E3)], format="vertices_and_edges",
+              name=f"I-graph (n={n}, j={j}, k={k})",
+              immutable=immutable)
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2 * n)), radius=.5, angle=pi/2)
     return G
