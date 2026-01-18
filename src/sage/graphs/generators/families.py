@@ -1738,7 +1738,7 @@ def IGraph(n, j, k, immutable=False):
     return G
 
 
-def DoubleGeneralizedPetersenGraph(n, k):
+def DoubleGeneralizedPetersenGraph(n, k, immutable=False):
     r"""
     Return a double generalized Petersen graph with `4n` nodes.
 
@@ -1753,6 +1753,9 @@ def DoubleGeneralizedPetersenGraph(n, k):
 
     - ``k`` -- integer such that `0 < k \leq \lfloor (n-1) / 2 \rfloor`
       determining how vertices on second and third inner rims are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the double generalized Petersen
@@ -1794,14 +1797,16 @@ def DoubleGeneralizedPetersenGraph(n, k):
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1 <= k <= floor((n - 1) / 2)")
 
-    G = Graph(4 * n, name=f"Double generalized Petersen graph (n={n}, k={k})")
-    for i in range(n):
-        G.add_edge(i, (i + 1) % n)
-        G.add_edge(i + 3 * n, (i + 1) % n + 3 * n)
-        G.add_edge(i, i + n)
-        G.add_edge(i + 2 * n, i + 3 * n)
-        G.add_edge(i + n, (i + k) % n + 2 * n)
-        G.add_edge(i + 2 * n, (i + k) % n + n)
+    from itertools import chain
+    E1 = ((i, (i + 1) % n) for i in range(n))
+    E2 = ((i + 3 * n, (i + 1) % n + 3 * n) for i in range(n))
+    E3 = ((i, i + n) for i in range(n))
+    E4 = ((i + 2 * n, i + 3 * n) for i in range(n))
+    E5 = ((i + n, (i + k) % n + 2 * n) for i in range(n))
+    E6 = ((i + 2 * n, (i + k) % n + n) for i in range(n))
+    G = Graph([range(4*n), chain(E1, E2, E3, E4, E5, E6)],
+              format="vertices_and_edges", immutable=immutable,
+              name=f"Double generalized Petersen graph (n={n}, k={k})")
     G._circle_embedding(list(range(n)), radius=3, angle=pi/2)
     G._circle_embedding(list(range(n, 2 * n)), radius=2, angle=pi/2)
     G._circle_embedding(list(range(2 * n, 3 * n)), radius=1.5, angle=pi/2)
