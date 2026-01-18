@@ -1291,10 +1291,19 @@ def GoethalsSeidelGraph(k, r, immutable=False):
                  name=f"Goethals-Seidel({k}, {r})", immutable=immutable)
 
 
-def DorogovtsevGoltsevMendesGraph(n):
+def DorogovtsevGoltsevMendesGraph(n, immutable=False):
     """
     Construct the `n`-th generation of the Dorogovtsev-Goltsev-Mendes
     graph.
+
+    See [DGM2002]_ for more details.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer; index of the generation
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1302,15 +1311,28 @@ def DorogovtsevGoltsevMendesGraph(n):
         sage: G.size()                                                                  # needs networkx
         6561
 
-    REFERENCE:
+    TESTS::
 
-    - [1] Dorogovtsev, S. N., Goltsev, A. V., and Mendes, J.
-      F. F., Pseudofractal scale-free web, Phys. Rev. E 066122
-      (2002).
+        sage: # needs networkx
+        sage: G = graphs.DorogovtsevGoltsevMendesGraph(0)
+        sage: G.order(), G.size()
+        (2, 1)
+        sage: G.is_immutable()
+        False
+        sage: G = graphs.DorogovtsevGoltsevMendesGraph(0, immutable=True)
+        sage: G.is_immutable()
+        True
+        sage: graphs.DorogovtsevGoltsevMendesGraph(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be greater than or equal to 0
     """
+    if n < 0:
+        raise ValueError("n must be greater than or equal to 0")
     import networkx
     return Graph(networkx.dorogovtsev_goltsev_mendes_graph(n),
-                 name=f"Dorogovtsev-Goltsev-Mendes Graph, {n}-th generation")
+                 name=f"Dorogovtsev-Goltsev-Mendes Graph, {n}-th generation",
+                 immutable=immutable)
 
 
 def FoldedCubeGraph(n):
