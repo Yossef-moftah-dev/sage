@@ -97,7 +97,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
         sage: graphs.RandomGNP(50,.2, algorithm='Sage').size()
         243
         sage: s = graphs.RandomGNP(50,.2, algorithm='networkx').size()                  # needs networkx
-        sage: s in [279, 209]  # 32 and 64 bit
+        sage: s in [279, 209]  # 32 and 64 bit, needs networkx
         True
     """
     if n < 0:
