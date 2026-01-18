@@ -1252,7 +1252,7 @@ def GoethalsSeidelGraph(k, r, immutable=False):
     EXAMPLES::
 
         sage: graphs.GoethalsSeidelGraph(3,3)                                           # needs sage.combinat sage.modules
-        Goethals-Seidel(3, 3): Graph on 28 vertices
+        Graph on 28 vertices
         sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)      # needs sage.combinat sage.modules
         (28, 15, 6, 10)
     """
@@ -1287,8 +1287,7 @@ def GoethalsSeidelGraph(k, r, immutable=False):
     for i in range(n):
         PP[i, i] = 0
 
-    return Graph(PP, format='seidel_adjacency_matrix',
-                 name=f"Goethals-Seidel({k}, {r})", immutable=immutable)
+    return Graph(PP, format='seidel_adjacency_matrix', immutable=immutable)
 
 
 def DorogovtsevGoltsevMendesGraph(n, immutable=False):
