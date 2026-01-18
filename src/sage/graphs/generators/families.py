@@ -1570,7 +1570,7 @@ def FuzzyBallGraph(partition, q, immutable=False):
                  name=f"Fuzzy-Ball({partition}, {q})")
 
 
-def GeneralizedPetersenGraph(n, k):
+def GeneralizedPetersenGraph(n, k, immutable=False):
     r"""
     Return a generalized Petersen graph with `2n` nodes. The variables
     `n`, `k` are integers such that `n>2` and `0<k\leq\lfloor(n-1)`/`2\rfloor`
@@ -1586,6 +1586,9 @@ def GeneralizedPetersenGraph(n, k):
 
     - ``k`` -- integer (`0<k\leq\lfloor(n-1)`/`2\rfloor`); decides
       how inner vertices are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the generalized
@@ -1618,6 +1621,13 @@ def GeneralizedPetersenGraph(n, k):
         sage: graphs.GeneralizedPetersenGraph(7, 2).name()
         'Generalized Petersen graph (n=7,k=2)'
 
+    Check the behavior of parameter immutable::
+
+        sage: graphs.GeneralizedPetersenGraph(7, 2).is_immutable()
+        False
+        sage: graphs.GeneralizedPetersenGraph(7, 2, immutable=True).is_immutable()
+        True
+
     AUTHORS:
 
     - Anders Jonsson (2009-10-15)
@@ -1626,11 +1636,13 @@ def GeneralizedPetersenGraph(n, k):
         raise ValueError("n must be larger than 2")
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1<= k <=floor((n-1)/2)")
-    G = Graph(2 * n, name=f"Generalized Petersen graph (n={n},k={k})")
-    for i in range(n):
-        G.add_edge(i, (i+1) % n)
-        G.add_edge(i, i+n)
-        G.add_edge(i+n, n + (i+k) % n)
+    from itertools import chain
+    E1 = ((i, (i + 1) % n) for i in range(n))
+    E2 = ((i, i + n) for i in range(n))
+    E3 = (( i + n, n + (i + k) % n) for i in range(n))
+    G = Graph([range(2*n), chain(E1, E2, E3)], format="vertices_and_edges",
+              name=f"Generalized Petersen graph (n={n},k={k})",
+              immutable=immutable)
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2*n)), radius=.5, angle=pi/2)
     return G
