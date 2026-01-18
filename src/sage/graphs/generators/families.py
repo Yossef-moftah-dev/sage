@@ -783,16 +783,23 @@ def TadpoleGraph(n1, n2, immutable=False):
     return G
 
 
-def AztecDiamondGraph(n):
-    """
+def AztecDiamondGraph(n, immutable=False):
+    r"""
     Return the Aztec Diamond graph of order ``n``.
 
     See the :wikipedia:`Aztec_diamond` for more information.
 
+    INPUT:
+
+    - ``n`` -- integer `\geq 0`; the order Aztec Diamond graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: graphs.AztecDiamondGraph(2)
-        Aztec Diamond graph of order 2
+        Aztec Diamond graph of order 2: Graph on 12 vertices
 
         sage: [graphs.AztecDiamondGraph(i).n_vertices() for i in range(8)]
         [0, 4, 12, 24, 40, 60, 84, 112]
@@ -803,17 +810,25 @@ def AztecDiamondGraph(n):
         sage: G = graphs.AztecDiamondGraph(3)
         sage: sum(1 for p in G.perfect_matchings())
         64
+
+    TESTS::
+
+        sage: n = randint(0, 3)
+        sage: graphs.AztecDiamondGraph(n).is_immutable()
+        False
+        sage: graphs.AztecDiamondGraph(n, immutable=True).is_immutable()
+        True
     """
     from sage.graphs.generators.basic import Grid2dGraph
     if n:
         N = 2 * n
-        G = Grid2dGraph(N, N)
+        G = Grid2dGraph(N, N, immutable=immutable)
         H = G.subgraph([(i, j) for i in range(N) for j in range(N)
                         if i - n <= j <= n + i and
                         n - 1 - i <= j <= 3 * n - i - 1])
     else:
-        H = Graph()
-    H.rename('Aztec Diamond graph of order {}'.format(n))
+        H = Graph(immutable=immutable)
+    H._name = f"Aztec Diamond graph of order {n}"
     return H
 
 
