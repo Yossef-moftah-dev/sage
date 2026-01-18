@@ -890,7 +890,7 @@ def DipoleGraph(n, immutable=False):
                  multiedges=True, immutable=immutable)
 
 
-def BubbleSortGraph(n):
+def BubbleSortGraph(n, immutable=False):
     r"""
     Return the bubble sort graph `B(n)`.
 
@@ -909,6 +909,9 @@ def BubbleSortGraph(n):
     INPUT:
 
     - ``n`` -- positive integer. The number of symbols to permute
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -961,7 +964,7 @@ def BubbleSortGraph(n):
             "Invalid number of symbols to permute, n should be >= 1")
     if n == 1:
         from sage.graphs.generators.basic import CompleteGraph
-        return Graph(CompleteGraph(n), name="Bubble sort")
+        return Graph(CompleteGraph(n), name="Bubble sort", immutable=immutable)
     from sage.combinat.permutation import Permutations
     # create set from which to permute
     label_set = [str(i) for i in range(1, n + 1)]
@@ -969,19 +972,20 @@ def BubbleSortGraph(n):
     # iterate through all vertices
     for v in Permutations(label_set):
         v = list(v)  # So we can easily mutate it
-        tmp_dict = {}
+        neighbors = []
         # add all adjacencies
         for i in range(n - 1):
             # swap entries
             v[i], v[i + 1] = v[i + 1], v[i]
             # add new vertex
             new_vert = ''.join(v)
-            tmp_dict[new_vert] = None
+            neighbors.append(new_vert)
             # swap back
             v[i], v[i + 1] = v[i + 1], v[i]
         # add adjacency dict
-        d[''.join(v)] = tmp_dict
-    return Graph(d, name="Bubble sort")
+        d[''.join(v)] = neighbors
+    return Graph(d, format="dict_of_lists", name="Bubble sort",
+                 immutable=immutable)
 
 
 def chang_graphs():
