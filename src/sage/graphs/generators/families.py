@@ -1497,7 +1497,7 @@ def FriendshipGraph(n, immutable=False):
     return G
 
 
-def FuzzyBallGraph(partition, q):
+def FuzzyBallGraph(partition, q, immutable=False):
     r"""
     Construct a Fuzzy Ball graph with the integer partition
     ``partition`` and ``q`` extra vertices.
@@ -1513,9 +1513,19 @@ def FuzzyBallGraph(partition, q):
     all partitions `p` of `m` with `k` parts are cospectral with
     respect to the normalized Laplacian.
 
+    INPUT:
+
+    - ``partition`` -- non empty list of positive integers
+
+    - ``q`` -- nonnegative integer; number of extra vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: F = graphs.FuzzyBallGraph([3,1],2)
+        sage: F = graphs.FuzzyBallGraph([3,1],2); F
+        Fuzzy-Ball([3, 1], 2): Graph on 8 vertices
         sage: F.adjacency_matrix(vertices=list(F))                                      # needs sage.modules
         [0 0 1 1 1 0 0 0]
         [0 0 0 0 0 1 0 0]
@@ -1541,15 +1551,23 @@ def FuzzyBallGraph(partition, q):
           - 120877/3240*x^3 + 1351/100*x^2 - 931/450*x}
     """
     from sage.graphs.generators.basic import CompleteGraph
-    if len(partition) < 1:
+    if not partition or any(i <= 0 for i in partition):
         raise ValueError("partition must be a nonempty list of positive integers")
+    if q < 0:
+        raise ValueError("q must be larger or equal to 0")
     n = q + sum(partition)
-    g = CompleteGraph(n)
-    curr_vertex = 0
-    for e, p in enumerate(partition):
-        g.add_edges([(curr_vertex + i, 'a{0}'.format(e + 1)) for i in range(p)])
-        curr_vertex += p
-    return g
+
+    def edges():
+        yield from combinations(range(n), 2)
+        curr_vertex = 0
+        for e, p in enumerate(partition):
+            v = 'a{0}'.format(e + 1)
+            for u in range(curr_vertex, curr_vertex + p):
+                yield (u, v)
+            curr_vertex += p
+
+    return Graph(edges(), format="list_of_edges", immutable=immutable,
+                 name=f"Fuzzy-Ball({partition}, {q})")
 
 
 def GeneralizedPetersenGraph(n, k):
