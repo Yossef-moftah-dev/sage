@@ -1814,7 +1814,7 @@ def DoubleGeneralizedPetersenGraph(n, k, immutable=False):
     return G
 
 
-def RoseWindowGraph(n, a, r):
+def RoseWindowGraph(n, a, r, immutable=False):
     r"""
     Return a rose window graph with `2n` nodes.
 
@@ -1830,6 +1830,9 @@ def RoseWindowGraph(n, a, r):
 
     - ``r`` -- integer such that `1 \leq r < n` and `r \neq n / 2` determining
       how inner vertices are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the rose window graphs are
@@ -1892,12 +1895,14 @@ def RoseWindowGraph(n, a, r):
     if r == n / 2:
         raise ValueError("r must be different than n / 2")
 
-    G = Graph(2 * n, name=f"Rose window graph (n={n}, a={a}, r={r})")
-    for i in range(n):
-        G.add_edge(i, (i + 1) % n)
-        G.add_edge(i, i + n)
-        G.add_edge((i + a) % n, i + n)
-        G.add_edge(i + n, (i + r) % n + n)
+    from itertools import chain
+    E1 = ((i, (i + 1) % n) for i in range(n))
+    E2 = ((i, i + n) for i in range(n))
+    E3 = (((i + a) % n, i + n) for i in range(n))
+    E4 = ((i + n, (i + r) % n + n) for i in range(n))
+    G = Graph([range(2*n), chain(E1, E2, E3, E4)],
+              format="vertices_and_edges", immutable=immutable,
+              name=f"Rose window graph (n={n}, a={a}, r={r})")
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2 * n)), radius=0.5, angle=pi/2)
     return G
