@@ -1222,7 +1222,7 @@ def CubeGraph(n, embedding=1, immutable=False):
     return G
 
 
-def GoethalsSeidelGraph(k, r):
+def GoethalsSeidelGraph(k, r, immutable=False):
     r"""
     Return the graph `\text{Goethals-Seidel}(k,r)`.
 
@@ -1242,6 +1242,9 @@ def GoethalsSeidelGraph(k, r):
 
     - ``k``, ``r`` -- integers
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     .. SEEALSO::
 
         - :func:`~sage.graphs.strongly_regular_db.is_goethals_seidel`
@@ -1249,7 +1252,7 @@ def GoethalsSeidelGraph(k, r):
     EXAMPLES::
 
         sage: graphs.GoethalsSeidelGraph(3,3)                                           # needs sage.combinat sage.modules
-        Graph on 28 vertices
+        Goethals-Seidel(3, 3): Graph on 28 vertices
         sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)      # needs sage.combinat sage.modules
         (28, 15, 6, 10)
     """
@@ -1284,8 +1287,8 @@ def GoethalsSeidelGraph(k, r):
     for i in range(n):
         PP[i, i] = 0
 
-    G = Graph(PP, format='seidel_adjacency_matrix')
-    return G
+    return Graph(PP, format='seidel_adjacency_matrix',
+                 name=f"Goethals-Seidel({k}, {r})", immutable=immutable)
 
 
 def DorogovtsevGoltsevMendesGraph(n):
