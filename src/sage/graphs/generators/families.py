@@ -708,7 +708,7 @@ def LollipopGraph(n1, n2, immutable=False):
     return G
 
 
-def TadpoleGraph(n1, n2):
+def TadpoleGraph(n1, n2, immutable=False):
     r"""
     Return a tadpole graph with `n_1 + n_2` nodes.
 
@@ -720,6 +720,15 @@ def TadpoleGraph(n1, n2):
     in the lower-left corner with the `n_1`-th node at a 45 degree angle above
     the right horizontal center of the cycle graph, leading directly into the
     path graph.
+
+    INPUT:
+
+    - ``n1`` -- integer `\geq 3`; the order of the cycle graph
+
+    - ``n2`` -- integer `\geq 0`; the order of the path graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -762,11 +771,13 @@ def TadpoleGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(n1 + n2, name="Tadpole graph")
-    G.add_cycle(list(range(n1)))
-    G.add_path(list(range(n1, n1 + n2)))
-    if n1 * n2 > 0:
-        G.add_edge(n1 - 1, n1)
+    from itertools import chain
+    C = ((i, i + 1) for i in range(n1 - 1))
+    e = ((0, n1 - 1),)
+    s = 1 if n2 else 0  # need edge connecting the cycle and the path
+    P = ((i, i + 1) for i in range(n1 - s, n1 + n2 - 1))
+    G = Graph([range(n1 + n2), chain(C, e, P)], format="vertices_and_edges",
+              name="Tadpole graph", immutable=immutable)
     G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
     G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
     return G
