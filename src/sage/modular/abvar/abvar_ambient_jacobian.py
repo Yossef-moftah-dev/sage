@@ -120,14 +120,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
             sage: A.rename('J_0(11)')
             sage: A
             J_0(11)
-
-        We now clear the cache to get rid of our renamed
-        `J_0(11)`.
-
-        ::
-
-            sage: import sage.modular.abvar.abvar_ambient_jacobian as abvar_ambient_jacobian
-            sage: abvar_ambient_jacobian._cache = {}
+            sage: A.reset_name()
         """
         txt = '' if self.base_field() == QQ else ' over %s' % self.base_field()
         return 'Abelian variety %s of dimension %s%s' % (self._ambient_repr(),
