@@ -55,6 +55,7 @@ from pexpect import ExceptionPexpect
 import sage.interfaces.abc
 from sage.cpython.string import bytes_to_str, str_to_bytes
 from sage.env import LOCAL_IDENTIFIER, SAGE_EXTCODE
+from sage.interfaces import quit
 from sage.interfaces.interface import (
     Interface,
     InterfaceElement,
@@ -64,8 +65,6 @@ from sage.interfaces.interface import (
 from sage.misc.instancedoc import instancedoc
 from sage.misc.object_multiplexer import Multiplex
 from sage.structure.element import RingElement
-
-from . import quit
 
 BAD_SESSION = -2
 

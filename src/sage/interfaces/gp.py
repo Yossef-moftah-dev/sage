@@ -149,7 +149,12 @@ from sage.misc.verbose import verbose
 
 lazy_import('sage.rings.cc', 'CC')
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 
 
 class Gp(ExtraTabCompletion, Expect):
