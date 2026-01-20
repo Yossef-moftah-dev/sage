@@ -86,7 +86,6 @@ class CryptoMiniSat(SatSolver):
             sage: solver = CryptoMiniSat()
             sage: solver.var()
             1
-
             sage: solver.add_clause((-1,2,-4))
             sage: solver.var()
             5
@@ -174,7 +173,7 @@ class CryptoMiniSat(SatSolver):
         self._solver.add_xor_clause(lits, rhs)
         self._clauses.append((lits, True, rhs))
 
-    def __call__(self, assumptions=None):
+    def __call__(self, assumptions=None) -> tuple | bool:
         r"""
         Solve this instance.
 
@@ -196,7 +195,6 @@ class CryptoMiniSat(SatSolver):
             sage: solver.add_clause((-1,-2))
             sage: solver()
             (None, False, True)
-
             sage: solver.add_clause((1,-2))
             sage: solver()
             False
