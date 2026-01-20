@@ -3802,8 +3802,14 @@ REFERENCES:
 .. [Ja1971] \N. Jacobson. *Exceptional Lie Algebras*. Marcel Dekker,
             Inc. New York. 1971. IBSN No. 0-8247-1326-5.
 
-.. [Jao2022] David Jao, et al. *Supersingular Isogeny Key Encapsulation*.
-             https://sike.org/files/SIDH-spec.pdf
+.. [Jao2022] David Jao, Reza Azarderakhsh, Matthew Campagna, Craig Costello,
+             Luca De Feo, Basil Hess, Aaron Hutchinson, Amir Jalali,
+             Koray Karabina, Brian Koziel, Brian LaMacchia, Patrick Longa,
+             Michael Naehrig, Geovandro Pereira, Joost Renes,
+             Vladimir Soukharev, and David Urbanik.
+             *Supersingular Isogeny Key Encapsulation*.
+             Technical report, National Institute of Standards and Technology,
+             2022. https://sike.org/files/SIDH-spec.pdf
 
 .. [Jer2006] Mark Jerrum. *Two remarks concerning balanced matroids*.
              Combinatorica 26, no. 6 (2006): 733-742.
