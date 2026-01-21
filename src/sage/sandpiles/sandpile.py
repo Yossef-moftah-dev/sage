@@ -3549,8 +3549,7 @@ class SandpileConfig(dict):
         r"""
         Return the stabilized configuration.
 
-        Optionally this returns the
-        corresponding firing vector.
+        Optionally this returns the corresponding firing vector.
 
         INPUT:
 
@@ -4851,8 +4850,7 @@ class SandpileDivisor(dict):
         if ub[-1] != 0:
             if with_firing_vector:
                 return vector([])
-            else:
-                return False
+            return False
 
         try:
             x = vector(ZZ, [ub[i] / D[i][i] for i in range(D.nrows() - 1)] + [0])
