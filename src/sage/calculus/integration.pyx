@@ -291,6 +291,7 @@ def numerical_integral(func, a, b=None,
         Traceback (most recent call last):
         ...
         RuntimeError: Function is not interruptible within 0.5000 seconds, only after 1... seconds
+        sage: # The elapsed time should be less than 1.1, but can sometimes take longer on CI
         sage: 1 < data['elapsed'] < 1.5
         True
 
