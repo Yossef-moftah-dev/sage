@@ -282,7 +282,7 @@ def number_of_connected_components(G, forbidden_vertices=None):
 connected_components_number = number_of_connected_components
 
 
-def connected_components_subgraphs(G, forbidden_vertices=None):
+def connected_components_subgraphs(G, forbidden_vertices=None, immutable=None):
     """
     Return a list of connected components as graph objects.
 
@@ -292,6 +292,11 @@ def connected_components_subgraphs(G, forbidden_vertices=None):
 
     - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
       avoid during the search
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graphs. ``immutable=None`` (default) means that the
+      graph and the subgraphs of its connected components will behave the same
+      way.
 
     EXAMPLES::
 
@@ -316,12 +321,25 @@ def connected_components_subgraphs(G, forbidden_vertices=None):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: def my_check(G, immutable):
+        ....:     L = G.connected_components_subgraphs(immutable=immutable)
+        ....:     if immutable is None:
+        ....:         immutable = G.is_immutable()
+        ....:     if any(g.is_immutable() != immutable for g in L):
+        ....:         print("wrong result")
+        sage: my_check(Graph(2, immutable=False), None)
+        sage: my_check(Graph(2, immutable=False), True)
+        sage: my_check(Graph(2, immutable=True), None)
+        sage: my_check(Graph(2, immutable=True), False)
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return [G.subgraph(c, inplace=False)
+    return [G.subgraph(c, inplace=False, immutable=immutable)
             for c in connected_components(G, sort=False,
                                           forbidden_vertices=forbidden_vertices)]
 
@@ -944,7 +962,8 @@ def biconnected_components(G, forbidden_vertices=None):
     return [b for b in B if len(b) > 1]
 
 
-def biconnected_components_subgraphs(G, forbidden_vertices=None):
+def biconnected_components_subgraphs(G, forbidden_vertices=None,
+                                     immutable=None):
     r"""
     Return a list of biconnected components as graph objects.
 
@@ -959,6 +978,11 @@ def biconnected_components_subgraphs(G, forbidden_vertices=None):
       avoid during the search. This is equilavent to get the biconnected
       components subgraphs of the graph after the removal of the forbidden
       vertices.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graphs. ``immutable=None`` (default) means that the
+      graph and the subgraphs of its connected components will behave the same
+      way.
 
     EXAMPLES::
 
@@ -989,13 +1013,26 @@ def biconnected_components_subgraphs(G, forbidden_vertices=None):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: def my_check(G, immutable):
+        ....:     L = G.biconnected_components_subgraphs(immutable=immutable)
+        ....:     if immutable is None:
+        ....:         immutable = G.is_immutable()
+        ....:     if any(g.is_immutable() != immutable for g in L):
+        ....:         print("wrong result")
+        sage: my_check(Graph(2, immutable=False), None)
+        sage: my_check(Graph(2, immutable=False), True)
+        sage: my_check(Graph(2, immutable=True), None)
+        sage: my_check(Graph(2, immutable=True), False)
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
     B = G.biconnected_components(forbidden_vertices=forbidden_vertices)
-    return [G.subgraph(c) for c in B]
+    return [G.subgraph(c, immutable=immutable) for c in B]
 
 
 def number_of_biconnected_components(G, forbidden_vertices=None):
@@ -2463,9 +2500,18 @@ def strongly_connected_components_digraph(G, keep_labels=False):
     return g
 
 
-def strongly_connected_components_subgraphs(G):
+def strongly_connected_components_subgraphs(G, immutable=None):
     r"""
     Return the strongly connected components as a list of subgraphs.
+
+    INPUT:
+
+    - ``G`` -- a directed graph
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graphs. ``immutable=None`` (default) means that the
+      graph and the subgraphs of its connected components will behave the same
+      way.
 
     EXAMPLES:
 
@@ -2494,12 +2540,27 @@ def strongly_connected_components_subgraphs(G):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage DiGraph
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: def my_check(G, immutable):
+        ....:     L = G.strongly_connected_components_subgraphs(immutable=immutable)
+        ....:     if immutable is None:
+        ....:         immutable = G.is_immutable()
+        ....:     if any(g.is_immutable() != immutable for g in L):
+        ....:         print("wrong result")
+        sage: edges = [(0, 1), (1, 0), (1, 2), (2, 3), (3, 2)]
+        sage: my_check(DiGraph(edges, immutable=False), None)
+        sage: my_check(DiGraph(edges, immutable=False), True)
+        sage: my_check(DiGraph(edges, immutable=True), None)
+        sage: my_check(DiGraph(edges, immutable=True), False)
     """
     from sage.graphs.digraph import DiGraph
     if not isinstance(G, DiGraph):
         raise TypeError("the input must be a Sage DiGraph")
 
-    return [G.subgraph(_) for _ in G.strongly_connected_components()]
+    return [G.subgraph(c, immutable=immutable)
+            for c in G.strongly_connected_components()]
 
 
 def strongly_connected_component_containing_vertex(G, v):
