@@ -1222,7 +1222,7 @@ def BiggsSmithGraph(embedding=1):
     return g
 
 
-def BlanusaFirstSnarkGraph():
+def BlanusaFirstSnarkGraph(immutable=False):
     r"""
     Return the first Blanusa Snark Graph.
 
@@ -1232,6 +1232,11 @@ def BlanusaFirstSnarkGraph():
     .. SEEALSO::
 
         * :meth:`~sage.graphs.graph_generators.GraphGenerators.BlanusaSecondSnarkGraph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1247,17 +1252,20 @@ def BlanusaFirstSnarkGraph():
         sage: g.automorphism_group().cardinality()                                      # needs sage.groups
         8
     """
-    g = Graph({17: [4, 7, 1], 0: [5], 3: [8], 13: [9], 12: [16],
-               10: [15], 11: [6], 14: [2]},
-              name="Blanusa First Snark Graph")
+    from itertools import chain
+    E1 = [(0, 5), (1, 17), (2, 14), (3, 8), (4, 17), (6, 11), (7, 17),
+          (9, 13), (10, 15), (12, 16)]
+    E2 = ((i, i + 1) for i in range(16))
+    E3 = ((0, 16), )
+    g = Graph([range(18), chain(E1, E2, E3)], format='vertices_and_edges',
+              name="Blanusa First Snark Graph", immutable=immutable)
 
-    g.add_cycle(list(range(17)))
     g._circle_embedding(list(range(17)), shift=0.25)
     g._pos[17] = (0, 0)
     return g
 
 
-def BlanusaSecondSnarkGraph():
+def BlanusaSecondSnarkGraph(immutable=False):
     r"""
     Return the second Blanusa Snark Graph.
 
@@ -1267,6 +1275,11 @@ def BlanusaSecondSnarkGraph():
     .. SEEALSO::
 
         * :meth:`~sage.graphs.graph_generators.GraphGenerators.BlanusaFirstSnarkGraph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1310,15 +1323,22 @@ def BlanusaSecondSnarkGraph():
                         radius=2.2)
 
     g._circle_embedding([c0, c1], shift=.5)
+    if immutable:
+        return g.relabel(inplace=False, immutable=True)
     g.relabel()
     return g
 
 
-def BrinkmannGraph():
+def BrinkmannGraph(immutable=False):
     r"""
     Return the Brinkmann graph.
 
     For more information, see the :wikipedia:`Brinkmann_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1378,14 +1398,15 @@ def BrinkmannGraph():
         15: [18, 19],
         16: [19, 20],
         17: [20]}
-    g = Graph(edge_dict, format='dict_of_lists', name="Brinkmann graph")
+    g = Graph(edge_dict, format='dict_of_lists', name="Brinkmann graph",
+              immutable=immutable)
     g._circle_embedding(range(7), radius=4, angle=pi/2)
     g._circle_embedding(range(7, 14), radius=2, angle=pi/2 + pi/7)
     g._circle_embedding(range(14, 21), radius=1, angle=pi/2 + pi/7)
     return g
 
 
-def BrouwerHaemersGraph():
+def BrouwerHaemersGraph(immutable=False):
     r"""
     Return the Brouwer-Haemers Graph.
 
@@ -1394,6 +1415,11 @@ def BrouwerHaemersGraph():
     `VO^-(6,3)`. For more information on this graph, see its `corresponding page
     on Andries Brouwer's website
     <https://www.win.tue.nl/~aeb/graphs/Brouwer-Haemers.html>`_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1421,8 +1447,13 @@ def BrouwerHaemersGraph():
     V = VectorSpace(F, d)
     M = Matrix(F, identity_matrix(d))
     M[1, 1] = -1
-    G = Graph([[tuple(_) for _ in V], lambda x, y: (V(x) - V(y))*(M*(V(x) - V(y))) == 0], loops=False)
-    G.relabel()
+    G = Graph([[tuple(_) for _ in V],
+               lambda x, y: (V(x) - V(y))*(M*(V(x) - V(y))) == 0],
+               format='rule', loops=False, name="Brouwer-Haemers")
+    if immutable:
+        G = G.relabel(inplace=False, immutable=True)
+    else:
+        G.relabel()
     ordering = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
                 18, 19, 20, 21, 22, 23, 24, 25, 26, 48, 49, 50, 51, 52, 53,
                 45, 46, 47, 30, 31, 32, 33, 34, 35, 27, 28, 29, 39, 40, 41,
@@ -1430,11 +1461,10 @@ def BrouwerHaemersGraph():
                 78, 79, 80, 72, 73, 74, 75, 76, 77, 60, 61, 62, 54, 55, 56,
                 57, 58, 59]
     G._circle_embedding(ordering)
-    G.name("Brouwer-Haemers")
     return G
 
 
-def BuckyBall():
+def BuckyBall(immutable=False):
     r"""
     Return the Bucky Ball graph.
 
@@ -1442,6 +1472,11 @@ def BuckyBall():
     correspond precisely to the carbon atoms and bonds in buckminsterfullerene.
     When embedded on a sphere, its 12 pentagon and 20 hexagon faces are arranged
     exactly as the sections of a soccer ball.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1482,9 +1517,6 @@ def BuckyBall():
              (48, 52), (49, 53), (49, 57), (50, 51), (50, 52), (51, 53),
              (54, 55), (54, 56), (55, 57), (56, 58), (57, 59), (58, 59)
              ]
-    g = Graph()
-    g.add_edges(edges)
-    g.name("Bucky Ball")
 
     pos = {
         0: (1.00000000000000, 0.000000000000000),
@@ -1549,12 +1581,11 @@ def BuckyBall():
         59: (0.500000000000000, -0.866025403784439)
     }
 
-    g.set_pos(pos)
+    return Graph([range(60), edges], format='vertices_and_edges',
+                 pos=pos, immutable=immutable, name="Bucky Ball")
 
-    return g
 
-
-def GossetGraph():
+def GossetGraph(immutable=False):
     r"""
     Return the Gosset graph.
 
@@ -1562,6 +1593,11 @@ def GossetGraph():
     :meth:`~sage.geometry.polyhedron.library.Polytopes.Gosset_3_21` polytope. It
     has with 56 vertices and degree 27. For more information, see the
     :wikipedia:`Gosset_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1581,7 +1617,7 @@ def GossetGraph():
               'mITZ@_e[{KXn?YPABzvY?IcO`zvYg@caC\\zlf?BaGR]zb{?@wOjv`~w??N_n_~'
               '~w???^_^~~{')
 
-    G = Graph(string, name="Gosset Graph")
+    G = Graph(string, name="Gosset Graph", immutable=immutable)
 
     ordering = [0, 2, 4, 6, 43, 23, 50, 18, 28, 9, 8, 7, 44, 3, 26, 35, 16, 14,
                 33, 15, 54, 30, 17, 21, 10, 13, 36, 31, 55, 53, 51, 49, 12, 32,
@@ -1593,12 +1629,17 @@ def GossetGraph():
     return G
 
 
-def DoubleStarSnark():
+def DoubleStarSnark(immutable=False):
     r"""
     Return the double star snark.
 
     The double star snark is a 3-regular graph on 30 vertices. See the
     :wikipedia:`Double-star_snark`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1646,7 +1687,8 @@ def DoubleStarSnark():
          28: [17, 27, 20],
          29: [25, 22, 15]}
 
-    g = Graph(d, format='dict_of_lists', name="Double star snark")
+    g = Graph(d, format='dict_of_lists', name="Double star snark",
+              immutable=immutable)
     g._circle_embedding(list(range(15)), radius=2)
     g._circle_embedding(list(range(15, 30)), radius=1.4)
 
