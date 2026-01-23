@@ -294,7 +294,7 @@ def connected_components_subgraphs(G, forbidden_vertices=None, immutable=None):
       avoid during the search
 
     - ``immutable`` -- boolean (default: ``None``); whether to create a
-      mutable/immutable graphs. ``immutable=None`` (default) means that the
+      mutable/immutable subgraphs. ``immutable=None`` (default) means that the
       graph and the subgraphs of its connected components will behave the same
       way.
 
