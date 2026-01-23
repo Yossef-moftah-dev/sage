@@ -621,8 +621,8 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None,
 
     # We iterate over all vertices to ensure that we visit each connected
     # component of the graph
-    cdef set forbidden = set() if forbidden_vertices is None else set(forbidden_vertices)
-    cdef set seen = set(forbidden)
+    cdef set seen = set() if forbidden_vertices is None else set(forbidden_vertices)
+    cdef frozenset forbidden = frozenset(seen)
     for start in G.vertex_iterator():
         if start in seen:
             continue
@@ -630,7 +630,7 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None,
         # Special case of an isolated vertex
         if (not G.degree(start) or
                 (forbidden and
-                 len(set(G.neighbors(start, closed=True)) - forbidden) == 1)):
+                 all(v in forbidden for v in G.neighbor_iterator(start)))):
             blocks.append([start])
             seen.add(start)
             continue
@@ -758,8 +758,8 @@ def blocks_and_cuts_tree(G, forbidden_vertices=None):
     - ``G`` -- a Sage graph
 
     - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
-      avoid during the search. This is equilavent to get the blocks-and-cut tree
-      of a graph in which the forbidden vertices have been removed.
+      avoid during the search. This is equivalent to getting the blocks and cut
+      tree of a graph in which the forbidden vertices have been removed.
 
     .. SEEALSO::
 
@@ -850,8 +850,8 @@ def is_biconnected(G, forbidden_vertices=None):
     - ``G`` -- a Sage graph
 
     - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
-      avoid during the search. This is equilavent to check whether the graph in
-      which the forbidden vertices have been removed is biconnected.
+      avoid during the search. This is equivalent to checking whether the graph
+      in which the forbidden vertices have been removed is biconnected.
 
     .. SEEALSO::
 
