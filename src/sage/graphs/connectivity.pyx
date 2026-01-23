@@ -906,7 +906,7 @@ def biconnected_components(G, forbidden_vertices=None):
     - ``G`` -- the input graph
 
     - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
-      avoid during the search. This is equilavent to get the biconnected
+      avoid during the search. This is equivalent to get the biconnected
       components of the graph after the removal of the forbidden vertices.
 
     EXAMPLES::
@@ -956,7 +956,7 @@ def biconnected_components_subgraphs(G, forbidden_vertices=None):
     - ``G`` -- the input graph
 
     - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
-      avoid during the search. This is equilavent to get the biconnected
+      avoid during the search. This is equivalent to get the biconnected
       components subgraphs of the graph after the removal of the forbidden
       vertices.
 
@@ -1010,7 +1010,7 @@ def number_of_biconnected_components(G, forbidden_vertices=None):
     - ``G`` -- the input graph
 
     - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
-      avoid during the search. This is equilavent to get the number of
+      avoid during the search. This is equivalent to get the number of
       biconnected components of the graph after the removal of the forbidden
       vertices.
 
