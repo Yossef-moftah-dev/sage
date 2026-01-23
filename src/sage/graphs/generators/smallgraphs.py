@@ -26,13 +26,18 @@ from math import sin, cos, pi
 #   Named Graphs
 # ****************************************************************************
 
-def HarborthGraph():
+def HarborthGraph(immutable=False):
     r"""
     Return the Harborth Graph.
 
     The Harborth graph has 104 edges and 52 vertices, and is the smallest known
     example of a 4-regular matchstick graph. For more information, see the
     :wikipedia:`Harborth_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -43,7 +48,8 @@ def HarborthGraph():
     """
     g = Graph(':s_OGKI?@_?g[QABAo__YEFCp@?iIEbqHWuWLbbh?}[OfcXpGhNHdYPY_SgdYX]'
               'pZkfJPuo[lfZHys^mFcDs}`pG{UNNgoHC}DIgrI[qjMhTyDQrQlVydrBYmWkn',
-              loops=False, multiedges=False)
+              loops=False, multiedges=False, immutable=immutable,
+              name="Harborth Graph")
 
     g.set_pos(
         {
@@ -101,7 +107,6 @@ def HarborthGraph():
             51: (648.5, 400.0),
         }
     )
-    g.name("Harborth Graph")
     return g
 
 
@@ -440,7 +445,7 @@ def WellsGraph():
     return g
 
 
-def Cell600(embedding=1):
+def Cell600(embedding=1, immutable=False):
     r"""
     Return the 600-Cell graph.
 
@@ -451,6 +456,9 @@ def Cell600(embedding=1):
 
     - ``embedding`` -- integer (default: `1`); two different embeddings for a
       plot
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -494,7 +502,8 @@ def Cell600(embedding=1):
     U = vert96 + vert16 + vert8
 
     g = Graph([list(range(120)),
-               lambda i, j: U[i].inner_product(U[j]) == f / 2])
+               lambda i, j: U[i].inner_product(U[j]) == f / 2],
+              format='rule', immutable=immutable)
 
     # Embedding
     if embedding == 1:
@@ -521,12 +530,17 @@ def Cell600(embedding=1):
     return g
 
 
-def Cell120():
+def Cell120(immutable=False):
     r"""
     Return the 120-Cell graph.
 
     This is the adjacency graph of the 120-cell. It has 600 vertices and 1200
     edges. For more information, see the :wikipedia:`120-cell`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -581,7 +595,8 @@ def Cell120():
     U = vert1 + vert2
 
     g = Graph([list(range(600)),
-               lambda i, j: U[i].inner_product(U[j]) == 6*f-2])
+               lambda i, j: U[i].inner_product(U[j]) == 6*f-2],
+              format='rule', immutable=immutable)
 
     pos = [0, 1, 3, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 17, 20, 21, 23, 24, 25,
            27, 33, 40, 47, 49, 76, 77, 216, 217, 218, 219, 220, 222, 224, 225,
@@ -631,7 +646,7 @@ def Cell120():
     return g
 
 
-def SuzukiGraph():
+def SuzukiGraph(immutable=False):
     r"""
     Return the Suzuki Graph.
 
@@ -643,6 +658,11 @@ def SuzukiGraph():
         It takes approximately 50 seconds to build this graph. Do not be too
         impatient.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: g = graphs.SuzukiGraph(); g  # optional internet # not tested
@@ -651,14 +671,15 @@ def SuzukiGraph():
         (1782, 416, 100, 96)
     """
     from sage.groups.perm_gps.permgroup_named import SuzukiSporadicGroup
-    g = Graph()
-    g.add_edges(SuzukiSporadicGroup().orbit((1, 2), "OnSets"))
-    g.relabel()
-    g.name("Suzuki graph")
+    g = Graph(SuzukiSporadicGroup().orbit((1, 2), "OnSets"),
+              format='list_of_edges', name="Suzuki graph")
+    if immutable:
+        return g.relabel(inplace=False, immutable=True)
+    g.relabel(inplace=True)
     return g
 
 
-def HallJankoGraph(from_string=True):
+def HallJankoGraph(from_string=True, immutable=False):
     r"""
     Return the Hall-Janko graph.
 
@@ -676,6 +697,9 @@ def HallJankoGraph(from_string=True):
     - ``from_string`` -- boolean (default: ``True``); whether to build the graph
       from its sparse6 string or through GAP. The two methods return the same
       graph though doing it through GAP takes more time.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -757,7 +781,8 @@ def HallJankoGraph(from_string=True):
                   "RxFQSlMSDDQTDXVUTi@?_KDAOoLBpKUEQOfIa{oLB_xMrt?Os\\HQcpMST"
                   "HSTtl[VT}A@ocJBOwSD`_XEpo_Ha_mJrKtLbgzNSTGQspLRtDUUDp\\WG["
                   "HB`CQCp[WFQGgIQgkJQ{rLbc{Nc@APsdLRt@PSt\\WUtt_Wn")
-        g = Graph(string, loops=False, multiedges=False)
+        g = Graph(string, loops=False, multiedges=False, immutable=immutable,
+                  name="Hall-Janko graph")
     else:
         # The following construction is due to version 3 of the ATLAS of
         # Finite Group Representations, specifically the page at
@@ -766,13 +791,14 @@ def HallJankoGraph(from_string=True):
         from sage.libs.gap.libgap import libgap
         libgap.load_package("AtlasRep")  # representation of HJ on 100 points
         G = libgap.AtlasGroup("HJ", libgap.NrMovedPoints, 100)
-        edges = G.Orbit([1, 5], libgap.OnSets)
-        g = Graph()
-        g.add_edges(edges)
-        g.relabel()
+        g = Graph(G.Orbit([1, 5], libgap.OnSets), format='list_of_edges',
+                  name="Hall-Janko graph")
+        if immutable:
+            g = g.relabel(inplace=False, immutable=True)
+        else:
+            g.relabel()
 
     g._circle_embedding(list(range(100)))
-    g.name("Hall-Janko graph")
     return g
 
 
@@ -1052,11 +1078,16 @@ def Balaban11Cage(embedding=1):
         raise ValueError("the value of embedding must be 1, 2, or 3")
 
 
-def BidiakisCube():
+def BidiakisCube(immutable=False):
     r"""
     Return the Bidiakis cube.
 
     For more information, see the :wikipedia:`Bidiakis_cube`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1098,7 +1129,8 @@ def BidiakisCube():
     edge_dict = {
         0: [1, 6, 11], 1: [2, 5], 2: [3, 10], 3: [4, 9], 4: [5, 8],
         5: [6], 6: [7], 7: [8, 11], 8: [9], 9: [10], 10: [11]}
-    g = Graph(edge_dict, format='dict_of_lists', name="Bidiakis cube")
+    g = Graph(edge_dict, format='dict_of_lists', name="Bidiakis cube",
+              immutable=immutable)
     g._circle_embedding(range(12), angle=pi/2)
     return g
 
