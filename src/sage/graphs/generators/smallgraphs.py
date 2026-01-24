@@ -1621,12 +1621,17 @@ def DoubleStarSnark():
     return g
 
 
-def MeredithGraph():
+def MeredithGraph(immutable=False):
     r"""
     Return the Meredith Graph.
 
     The Meredith Graph is a 4-regular 4-connected non-hamiltonian graph. For
     more information on the Meredith Graph, see the :wikipedia:`Meredith_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1649,7 +1654,6 @@ def MeredithGraph():
         False
     """
     g = Graph(name="Meredith Graph")
-    g.add_vertex(0)
 
     # Edges between copies of K_{4,3}
     for i in range(5):
@@ -1674,17 +1678,23 @@ def MeredithGraph():
     g._circle_embedding(sum([[('inner', i, j) for j in range(4, 7)] + 5 * [0] for i in range(5)], []),
                         radius=.4, shift=1.05)
 
-    g.delete_vertex(0)
+    if immutable:
+        return g.relabel(inplace=False, immutable=True)
     g.relabel()
     return g
 
 
-def KittellGraph():
+def KittellGraph(immutable=False):
     r"""
     Return the Kittell Graph.
 
     For more information, see the `Wolfram page about the Kittel Graph
     <http://mathworld.wolfram.com/KittellGraph.html>`_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1713,8 +1723,8 @@ def KittellGraph():
                16: [3, 12, 5, 6, 15], 17: [18, 19, 22, 6, 15],
                18: [8, 17, 19, 6, 7], 19: [8, 9, 17, 18, 20, 22],
                20: [9, 10, 19, 21, 22], 21: [10, 11, 20, 22, 15],
-               22: [17, 19, 20, 21, 15]},
-              name="Kittell Graph")
+               22: [17, 19, 20, 21, 15]}, format="dict_of_lists",
+              name="Kittell Graph", immutable=immutable)
 
     g._circle_embedding(list(range(3)), shift=.75)
     g._circle_embedding(list(range(3, 13)), radius=.4)
@@ -1727,7 +1737,7 @@ def KittellGraph():
     return g
 
 
-def CameronGraph():
+def CameronGraph(immutable=False):
     r"""
     Return the Cameron graph.
 
@@ -1736,6 +1746,11 @@ def CameronGraph():
 
     For more information on the Cameron graph, see
     `<https://www.win.tue.nl/~aeb/graphs/Cameron.html>`_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1756,7 +1771,10 @@ def CameronGraph():
         for a, b, c, d in combinations(set(s), 4):
             g.add_edges([((a, b), (c, d)), ((a, c), (b, d)), ((a, d), (b, c))])
 
-    g.relabel()
+    if immutable:
+        g = g.relabel(inplace=False, immutable=True)
+    else:
+        g.relabel()
     ordering = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20,
                 21, 24, 25, 26, 27, 29, 31, 34, 35, 38, 39, 96, 97, 101, 105,
                 51, 117, 198, 32, 196, 201, 131, 167, 199, 197, 86, 102, 195,
@@ -1779,7 +1797,7 @@ def CameronGraph():
     return g
 
 
-def ChvatalGraph():
+def ChvatalGraph(immutable=False):
     r"""
     Return the Chvatal graph.
 
@@ -1787,6 +1805,11 @@ def ChvatalGraph():
     conjecture that for every `m`, `n`, there is an `m`-regular, `m`-chromatic
     graph of girth at least `n`. For more information, see the
     :wikipedia:`Chv%C3%A1tal_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1817,18 +1840,24 @@ def ChvatalGraph():
     edges = {0: [1, 4, 6, 9], 1: [2, 5, 7], 2: [3, 6, 8], 3: [4, 7, 9],
              4: [5, 8], 5: [10, 11], 6: [10, 11], 7: [8, 11], 8: [10],
              9: [10, 11]}
-    g = Graph(edges, format='dict_of_lists', name="Chvatal graph")
+    g = Graph(edges, format='dict_of_lists', name="Chvatal graph",
+              immutable=immutable)
     g._circle_embedding(range(5), radius=4, angle=pi/2)
     g._circle_embedding(range(5, 10), radius=2, angle=pi/2)
     g._circle_embedding(range(10, 12), radius=1)
     return g
 
 
-def ClebschGraph():
+def ClebschGraph(immutable=False):
     r"""
     Return the Clebsch graph.
 
     See the :wikipedia:`Clebsch_graph` for more information.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1843,21 +1872,21 @@ def ClebschGraph():
         2
         sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
     """
-    g = Graph(pos={})
-    x = 0
-    for i in range(8):
-        g.add_edge(x % 16, (x + 1) % 16)
-        g.add_edge(x % 16, (x + 6) % 16)
-        g.add_edge(x % 16, (x + 8) % 16)
-        x += 1
-        g.add_edge(x % 16, (x + 3) % 16)
-        g.add_edge(x % 16, (x + 2) % 16)
-        g.add_edge(x % 16, (x + 8) % 16)
-        x += 1
+    def edges():
+        x = 0
+        for i in range(8):
+            yield (x % 16, (x + 1) % 16)
+            yield (x % 16, (x + 6) % 16)
+            yield (x % 16, (x + 8) % 16)
+            x += 1
+            yield (x % 16, (x + 3) % 16)
+            yield (x % 16, (x + 2) % 16)
+            yield (x % 16, (x + 8) % 16)
+            x += 1
 
+    g = Graph([range(16), edges()], format="vertices_and_edges",
+              name="Clebsch graph", immutable=immutable)
     g._circle_embedding(list(range(16)), shift=.5)
-    g.name("Clebsch graph")
-
     return g
 
 
