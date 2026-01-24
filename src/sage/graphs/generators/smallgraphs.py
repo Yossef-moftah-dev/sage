@@ -4618,7 +4618,7 @@ def TietzeGraph():
     return g
 
 
-def TricornGraph():
+def TricornGraph(immutable=False):
     r"""
     Return the Tricorn graph.
 
@@ -4653,6 +4653,11 @@ def TricornGraph():
     the `0`-th one. Rest of the nine vertices are shown in groups of three,
     one on the top, rest two on the bottom left and on the bottom right
     corners respectively.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -4701,17 +4706,11 @@ def TricornGraph():
         8: (sqrt(3)/2 + 1/2, -1/2 - sqrt(3)/2),
         9: (sqrt(3)/2 + 1, -1/2)
     }
+    edges = ((0, 1), (0, 4), (0, 7), (1, 2), (1, 3), (2, 3), (2, 9), (3, 5),
+             (4, 5), (4, 6), (5, 6), (6, 8), (7, 8), (7, 9), (8, 9))
 
-    G = Graph(10, pos=pos_dict, name="Tricorn Graph")
-
-    for v in range(1, 8, 3):
-        G.add_edges([
-            (0, v), (v, v+1),
-            (v, v+2), (v+1, v+2),
-            (v+2, int((-v**2 + 7*v + 4)/2))
-        ])
-
-    return G
+    return Graph([range(10), edges], format="vertices_and_edges", pos=pos_dict,
+                 name="Tricorn Graph", immutable=immutable)
 
 
 def TruncatedIcosidodecahedralGraph():
@@ -4741,12 +4740,17 @@ def TruncatedIcosidodecahedralGraph():
     return G
 
 
-def TruncatedTetrahedralGraph():
+def TruncatedTetrahedralGraph(immutable=False):
     r"""
     Return the truncated tetrahedron.
 
     The truncated tetrahedron is an Archimedean solid with 12 vertices and 18
     edges. For more information, see the :wikipedia:`Truncated_tetrahedron`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4757,11 +4761,11 @@ def TruncatedTetrahedralGraph():
         sage: g.is_isomorphic(polytopes.simplex(3).truncation().graph())                # needs sage.geometry.polyhedron
         True
     """
-    g = Graph(':K`ESwC_EOyDl\\MCi', loops=False, multiedges=False)
+    g = Graph(':K`ESwC_EOyDl\\MCi', loops=False, multiedges=False,
+              name="Truncated Tetrahedron", immutable=immutable)
     g._circle_embedding(list(range(6)), radius=1)
     g._circle_embedding(list(range(6, 9)), radius=.6, shift=.25)
     g._circle_embedding(list(range(9, 12)), radius=.2, shift=.25)
-    g.name("Truncated Tetrahedron")
     return g
 
 
@@ -4854,13 +4858,18 @@ def TutteCoxeterGraph(embedding=2):
     return g
 
 
-def TutteGraph():
+def TutteGraph(immutable=False):
     r"""
     Return the Tutte Graph.
 
     The Tutte graph is a 3-regular, 3-connected, and planar non-hamiltonian
     graph. For more information on the Tutte Graph, see the
     :wikipedia:`Tutte_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4910,10 +4919,10 @@ def TutteGraph():
 
     g._pos[0] = (0,0)
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
-def TwinplexGraph(embedding='LM'):
+def TwinplexGraph(embedding='LM', immutable=False):
     r"""
     Return the Twinplex graph.
 
@@ -4963,6 +4972,9 @@ def TwinplexGraph(embedding='LM'):
 
       - ``'RST'`` displays the embedding as shown for the ``Twinplex`` by
         Robertson, Seymour and Thomas [RST2019]_
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -5017,17 +5029,16 @@ def TwinplexGraph(embedding='LM'):
 
     - Janmenjaya Panda (2024-08-03)
     """
+    from itertools import chain
+    from math import pi
+
     if embedding == 'FL':
-        from math import pi
 
-        G = Graph(12, name='Twinplex Graph')
-        G.add_cycle(list(range(12)))
-
-        G.add_edges([
-            (0, 8), (1, 5), (2, 9),
-            (3, 7), (4, 11), (6, 10)
-        ])
-
+        E1 = ((i, i + 1) for i in range(11))
+        E2 = ((0, 11),)
+        E3 = ((0, 8), (1, 5), (2, 9), (3, 7), (4, 11), (6, 10))
+        G = Graph([range(12), chain(E1, E2, E3)], format="vertices_and_edges",
+                  name='Twinplex Graph', immutable=immutable)
         G._circle_embedding(list(range(12)), angle=5*pi/12)
 
     elif embedding == 'NT':
@@ -5045,16 +5056,11 @@ def TwinplexGraph(embedding='LM'):
             10: (3, 0),
             11: (4, -1),
         }
-
-        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
-        G.add_edges([
-            (0, 2), (0, 4), (0, 6),
-            (1, 3), (1, 5), (1, 6),
-            (2, 7), (2, 9), (3, 7),
-            (3, 8), (4, 8), (4, 10),
-            (5, 9), (5, 10), (6, 11),
-            (7, 11), (8, 9), (10, 11)
-        ])
+        edges = ((0, 2), (0, 4), (0, 6), (1, 3), (1, 5), (1, 6),
+                 (2, 7), (2, 9), (3, 7), (3, 8), (4, 8), (4, 10),
+                 (5, 9), (5, 10), (6, 11), (7, 11), (8, 9), (10, 11))
+        G = Graph([range(12), edges], format="vertices_and_edges", pos=pos_dict,
+                  name='Twinplex Graph', immutable=immutable)
 
     elif embedding == 'RST':
         pos_dict = {
@@ -5071,20 +5077,13 @@ def TwinplexGraph(embedding='LM'):
             10: (1, -1),
             11: (-1, -1)
         }
-
-        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
-
-        G.add_cycle(list(range(8)))
-        G.add_edges([
-            (0, 4), (1, 8), (2, 10),
-            (3, 9), (5, 10), (6, 8),
-            (7, 11), (8, 9), (9, 11),
-            (10, 11)
-        ])
+        edges = ((0, 1), (0, 4), (0, 7), (1, 2), (1, 8), (2, 3),
+                 (2, 10), (3, 4), (3, 9), (4, 5), (5, 6), (5, 10),
+                 (6, 7), (6, 8), (7, 11), (8, 9), (9, 11), (10, 11))
+        G = Graph([range(12), edges], format="vertices_and_edges", pos=pos_dict,
+                  name='Twinplex Graph', immutable=immutable)
 
     elif embedding == 'LM':
-        from math import pi
-
         pos_dict = {
             8: (0, 1),
             9: (1, 0),
@@ -5096,13 +5095,11 @@ def TwinplexGraph(embedding='LM'):
             t = pi * (v+2)/4
             pos_dict[v] = (-2*cos(t), 2*sin(t))
 
-        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
-
-        G.add_cycle(list(range(8)))
-        G.add_edges([
-            (0, 8), (1, 11), (2, 9), (3, 10), (4, 8),
-            (5, 11), (6, 9), (7, 10), (8, 9), (10, 11)
-        ])
+        edges = ((0, 1), (0, 7), (0, 8), (1, 2), (1, 11), (2, 3),
+                 (2, 9), (3, 4), (3, 10), (4, 5), (4, 8), (5, 6),
+                 (5, 11), (6, 7), (6, 9), (7, 10), (8, 9), (10, 11))
+        G = Graph([range(12), edges], format="vertices_and_edges", pos=pos_dict,
+                  name='Twinplex Graph', immutable=immutable)
 
     else:
         raise ValueError("parameter 'embedding' must be 'FL', 'NT',"
