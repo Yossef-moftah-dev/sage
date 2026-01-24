@@ -570,7 +570,7 @@ class PolynomialRing_generic(Ring):
             return [None, "generic"]
         return NotImplemented
 
-    def is_integral_domain(self, proof=True):
+    def is_integral_domain(self, proof=True) -> bool:
         """
         EXAMPLES::
 
@@ -581,7 +581,7 @@ class PolynomialRing_generic(Ring):
         """
         return self.base_ring().is_integral_domain(proof)
 
-    def is_unique_factorization_domain(self, proof=True):
+    def is_unique_factorization_domain(self, proof=True) -> bool:
         """
         EXAMPLES::
 
@@ -592,7 +592,7 @@ class PolynomialRing_generic(Ring):
         """
         return self.base_ring().is_unique_factorization_domain(proof)
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         return self.base_ring().is_noetherian()
 
     def some_elements(self):

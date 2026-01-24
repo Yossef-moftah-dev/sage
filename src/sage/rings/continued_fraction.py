@@ -1016,9 +1016,9 @@ class ContinuedFraction_base(SageObject):
         """
         if self.length() == 1:
             return self.quotient(0)
-        return self.quotient(0)+1
+        return self.quotient(0) + 1
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``False`` if ``self`` is zero.
 
@@ -1035,7 +1035,7 @@ class ContinuedFraction_base(SageObject):
         """
         return bool(self.quotient(0)) or self.quotient(1) is not Infinity
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Test whether ``self`` is zero.
 
@@ -1052,7 +1052,7 @@ class ContinuedFraction_base(SageObject):
         """
         return self.quotient(0) == ZZ_0 and self.quotient(1) is Infinity
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Test whether ``self`` is one.
 
@@ -1069,7 +1069,7 @@ class ContinuedFraction_base(SageObject):
         """
         return self.quotient(0) == ZZ_1 and self.quotient(1) is Infinity
 
-    def is_minus_one(self):
+    def is_minus_one(self) -> bool:
         r"""
         Test whether ``self`` is minus one.
 
