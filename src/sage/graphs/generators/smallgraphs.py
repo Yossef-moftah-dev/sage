@@ -3646,7 +3646,7 @@ def LjubljanaGraph(embedding=1):
     return g
 
 
-def LivingstoneGraph():
+def LivingstoneGraph(immutable=False):
     r"""
     Return the Livingstone Graph.
 
@@ -3654,6 +3654,11 @@ def LivingstoneGraph():
     automorphism group is the :class:`J1 group
     <sage.groups.perm_gps.permgroup_named.JankoGroup>`. For more information,
     see the :wikipedia:`Livingstone_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3673,12 +3678,12 @@ def LivingstoneGraph():
     from sage.groups.perm_gps.permgroup_named import JankoGroup
     from sage.graphs.graph import Graph
     G = JankoGroup(1)
-    g = Graph(name="Livingstone Graph")
-    g.add_edges(map(tuple, G.orbit((1, 24), action='OnSets')))
-    return g
+    return Graph(map(tuple, G.orbit((1, 24), action='OnSets')),
+                 format="list_of_edges", immutable=immutable,
+                 name="Livingstone Graph")
 
 
-def M22Graph():
+def M22Graph(immutable=False):
     r"""
     Return the M22 graph.
 
@@ -3687,6 +3692,11 @@ def M22Graph():
 
     For more information on the `M_{22}` graph, see
     `<https://www.win.tue.nl/~aeb/graphs/M22.html>`_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3702,7 +3712,10 @@ def M22Graph():
     from sage.groups.perm_gps.permgroup_named import MathieuGroup
     sets = [tuple(_) for _ in MathieuGroup(22).orbit((1, 2, 3, 7, 10, 20), action='OnSets')]
     g = Graph([sets, lambda x, y: not any(xx in y for xx in x)], name="M22 Graph")
-    g.relabel()
+    if immutable:
+        g = g.relabel(inplace=False, immutable=True)
+    else:
+        g.relabel()
     ordering = [0, 1, 3, 4, 5, 6, 7, 10, 12, 19, 20, 31, 2, 24, 35, 34, 22, 32,
                 36, 23, 27, 25, 40, 26, 16, 71, 61, 63, 50, 68, 39, 52, 48, 44,
                 69, 28, 9, 64, 60, 17, 38, 49, 45, 65, 14, 70, 72, 21, 43, 56,
@@ -3714,7 +3727,7 @@ def M22Graph():
     return g
 
 
-def MarkstroemGraph():
+def MarkstroemGraph(immutable=False):
     r"""
     Return the Markström Graph.
 
@@ -3722,6 +3735,11 @@ def MarkstroemGraph():
     8, but containing cycles of length 16. For more information, see the
     `Wolfram page about the Markström Graph
     <http://mathworld.wolfram.com/MarkstroemGraph.html>`_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3759,7 +3777,7 @@ def MarkstroemGraph():
     g._circle_embedding([21, 22, 23], radius=.15, shift=.25)
     g._circle_embedding(list(range(9)))
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
 def McGeeGraph(embedding=2):
@@ -3818,7 +3836,7 @@ def McGeeGraph(embedding=2):
         raise ValueError("the value of embedding must be 1 or 2")
 
 
-def McLaughlinGraph():
+def McLaughlinGraph(immutable=False):
     r"""
     Return the McLaughlin Graph.
 
@@ -3832,6 +3850,11 @@ def McLaughlinGraph():
     .. NOTE::
 
         To create this graph you must have the gap_packages spkg installed.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3849,7 +3872,7 @@ def McLaughlinGraph():
 
     B = [b for b in blocks if 0 in b]
     C = [b for b in blocks if 0 not in b]
-    g = Graph()
+    g = Graph(name="McLaughlin")
     for b in B:
         for x in range(1, 23):
             if x not in b:
@@ -3873,9 +3896,11 @@ def McLaughlinGraph():
                 g.add_edge(b, c)
 
     # Here we relabel the elements of g in an architecture-independent way
-    g.relabel({v: i for i, v in enumerate(list(range(1, 23)) +
-                                          sorted(blocks, key=sorted))})
-    g.name("McLaughlin")
+    perm = {v: i for i, v in enumerate(list(range(1, 23)) +
+                                       sorted(blocks, key=sorted))}
+    if immutable:
+        return g.relabel(perm=perm, inplace=False, immutable=True)
+    g.relabel(perm=perm)
     return g
 
 
@@ -3908,11 +3933,16 @@ def MoebiusKantorGraph():
     return G
 
 
-def MoserSpindle():
+def MoserSpindle(immutable=False):
     r"""
     Return the Moser spindle.
 
     For more information, see the :wikipedia:`Moser_spindle`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -3973,7 +4003,8 @@ def MoserSpindle():
             QQ('1/2') * sqrt(- QQ('1/6') * sqrt(33) + QQ('17/6'))],
         6: [- QQ('1/12') * sqrt(33) + QQ('1/4'),
             QQ('1/2') * sqrt(- QQ('1/6') * sqrt(33) + QQ('17/6'))]}
-    return Graph(edge_dict, pos=pos_dict, name="Moser spindle")
+    return Graph(edge_dict, format="dict_of_lists", pos=pos_dict,
+                 name="Moser spindle", immutable=immutable)
 
 
 def MurtyGraph():
