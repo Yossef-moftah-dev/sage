@@ -8431,31 +8431,46 @@ def bistochastic_as_sum_of_permutations(M, check=True):
         sage: decomp = bistochastic_as_sum_of_permutations(M)
         Traceback (most recent call last):
         ...
-        ValueError: The matrix is not bistochastic
+        ValueError: the matrix is not bistochastic
         sage: bistochastic_as_sum_of_permutations(Matrix(GF(7), 2, [2,1,1,2]))
         Traceback (most recent call last):
         ...
-        ValueError: The base ring of the matrix must have a coercion map to RR
+        ValueError: the base ring of the matrix must have a coercion map to RR
         sage: bistochastic_as_sum_of_permutations(Matrix(ZZ, 2, [2,-1,-1,2]))
         Traceback (most recent call last):
         ...
-        ValueError: The matrix should have nonnegative entries
+        ValueError: the matrix should have nonnegative entries
+
+    TESTS::
+
+        sage: matrix(RR, [  # abs tol 1e-14
+        ....:     [.62, .23, .15],
+        ....:     [.24, .40, .36],
+        ....:     [.14, .37, .49],
+        ....: ]).as_sum_of_permutations()
+        0.4*B[[1, 2, 3]] + 0.22*B[[1, 3, 2]] + 0.09*B[[2, 1, 3]] + 0.15*B[[2, 3, 1]] + 0.14*B[[3, 1, 2]]
+        sage: matrix(RDF, [  # abs tol 1e-14
+        ....:     [.62, .23, .15],
+        ....:     [.24, .40, .36],
+        ....:     [.14, .37, .49],
+        ....: ]).as_sum_of_permutations()
+        0.4*B[[1, 2, 3]] + 0.22*B[[1, 3, 2]] + 0.09*B[[2, 1, 3]] + 0.15*B[[2, 3, 1]] + 0.14*B[[3, 1, 2]]
     """
     n = M.nrows()
 
     if n != M.ncols():
-        raise ValueError("The matrix is expected to be square")
+        raise ValueError("the matrix is expected to be square")
 
     if not all(x >= 0 for x in M.list()):
-        raise ValueError("The matrix should have nonnegative entries")
+        raise ValueError("the matrix should have nonnegative entries")
 
     if check and not M.is_bistochastic(normalized=False):
-        raise ValueError("The matrix is not bistochastic")
+        raise ValueError("the matrix is not bistochastic")
 
     from sage.rings.real_mpfr import RR
 
     if not RR.has_coerce_map_from(M.base_ring()):
-        raise ValueError("The base ring of the matrix must have a coercion map to RR")
+        raise ValueError("the base ring of the matrix must have a coercion map to RR")
 
     from sage.graphs.bipartite_graph import BipartiteGraph
     from sage.combinat.free_module import CombinatorialFreeModule
@@ -8468,6 +8483,10 @@ def bistochastic_as_sum_of_permutations(M, check=True):
 
     while G.size() > 0:
         matching = G.matching(use_edge_labels=True)
+        if len(matching) != n:
+            if M.base_ring().is_exact():
+                raise ValueError("this cannot possibly happen")
+            break
         matching = [(min(u, v), max(u, v), w) for u, v, w in matching]
 
         # This minimum is strictly larger than 0
