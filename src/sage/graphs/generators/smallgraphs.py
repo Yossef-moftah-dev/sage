@@ -2919,13 +2919,18 @@ def GrayGraph(embedding=1):
     return g
 
 
-def GrotzschGraph():
+def GrotzschGraph(immutable=False):
     r"""
     Return the Grötzsch graph.
 
     The Grötzsch graph is an example of a triangle-free graph with chromatic
     number equal to 4. For more information, see the
     :wikipedia:`Gr%C3%B6tzsch_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2962,19 +2967,16 @@ def GrotzschGraph():
         sage: ag.is_isomorphic(DihedralGroup(5))                                        # needs sage.groups
         True
     """
-    edges = [(0, u) for u in range(1, 6)]
-    edges.append((10, 6))
-    edges.append((10, 1))
-    edges.append((6, 5))
+    from itertools import chain
+    E1 = ((0, u) for u in range(1, 6))
+    E2 = ((10, 6), (10, 1), (6, 5))
+    E3 = ((u, u + 1) for u in range(6, 10))
+    E4 = ((u, u - 4) for u in range(6, 10))
+    E5 = ((u, u - 6) for u in range(7, 11))
 
-    for u in range(6, 10):
-        edges.append((u, u + 1))
-        edges.append((u, u - 4))
-
-    for u in range(7, 11):
-        edges.append((u, u - 6))
-
-    g = Graph(edges, format='list_of_edges', name="Grotzsch graph")
+    g = Graph([range(11), chain(E1, E2, E3, E4, E5)],
+              format='vertices_and_edges', name="Grotzsch graph",
+              immutable=immutable)
     g._circle_embedding(range(1, 6), radius=1, angle=pi/2)
     g._circle_embedding(range(6, 11), radius=2, angle=pi/2)
     g._pos[0] = (0, 0)
@@ -3082,12 +3084,17 @@ def HerschelGraph():
     return g
 
 
-def GritsenkoGraph():
+def GritsenkoGraph(immutable=False):
     r"""
     Return SRG(65, 32, 15, 16) constructed by Gritsenko.
 
     We took the adjacency matrix from O. Gritsenko's [Gri2021]_ and extracted
     orbits of the automorphism group on the edges.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3115,11 +3122,11 @@ def GritsenkoGraph():
     # use the union of the orbits of a on the edges
     return Graph(reduce(lambda x, y: x + y,
                         (a.orbit(o, action='OnSets') for o in edges)),
-                 format='list_of_edges',
+                 format='list_of_edges', immutable=immutable,
                  name="Gritsenko strongly regular graph")
 
 
-def HigmanSimsGraph(relabel=True):
+def HigmanSimsGraph(relabel=True, immutable=False):
     r"""
     Return the Higman-Sims graph.
 
@@ -3147,6 +3154,9 @@ def HigmanSimsGraph(relabel=True):
       vertex `z` (zero through four) of that pentagon or pentagram. See
       [Haf2004]_ for more.
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     OUTPUT: the Higman-Sims graph
 
     EXAMPLES:
@@ -3169,15 +3179,29 @@ def HigmanSimsGraph(relabel=True):
     The automorphism group contains only one nontrivial proper normal subgroup,
     which is of index 2 and is simple.  It is known as the Higman-Sims group::
 
+        sage: # needs sage.groups
         sage: H = graphs.HigmanSimsGraph()
-        sage: G = H.automorphism_group()                                                # needs sage.groups
-        sage: g = G.order(); g                                                          # needs sage.groups
+        sage: G = H.automorphism_group()
+        sage: g = G.order(); g
         88704000
-        sage: K = G.normal_subgroups()[1]                                               # needs sage.groups
-        sage: K.is_simple()                                                             # needs sage.groups
+        sage: K = G.normal_subgroups()[1]
+        sage: K.is_simple()
         True
-        sage: g//K.order()                                                              # needs sage.groups
+        sage: g//K.order()
         2
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: graphs.HigmanSimsGraph(relabel=True, immutable=True).is_immutable()
+        True
+        sage: graphs.HigmanSimsGraph(relabel=False, immutable=True).is_immutable()
+        True
+        sage: graphs.HigmanSimsGraph(relabel=True, immutable=False).is_immutable()
+        False
+        sage: graphs.HigmanSimsGraph(relabel=False, immutable=False).is_immutable()
+        False
 
     AUTHOR:
 
@@ -3251,12 +3275,14 @@ def HigmanSimsGraph(relabel=True):
 
     # Layout vertices in a circle, in the order given in vlist
     HS._circle_embedding(vlist, radius=10, angle=pi/2)
+    if immutable:
+        return HS.relabel(inplace=False, immutable=True) if relabel else HS.copy(immutable=True)
     if relabel:
         HS.relabel(range(100))
     return HS
 
 
-def HoffmanSingletonGraph():
+def HoffmanSingletonGraph(immutable=False):
     r"""
     Return the Hoffman-Singleton graph.
 
@@ -3275,6 +3301,11 @@ def HoffmanSingletonGraph():
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. A novel algorithm written by Tom Boothby gives
     a random layout which is pleasing to the eye.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3340,16 +3371,24 @@ def HoffmanSingletonGraph():
         if v:
             s = int(v[0])
         l += 1
-    map = H.relabel(range(50), return_map=True)
-    H._circle_embedding([map[d] for d in D], angle=pi/2)
+    if immutable:
+        H, mymap = H.relabel(inplace=False, immutable=True, return_map=True)
+    else:
+        mymap = H.relabel(range(50), return_map=True)
+    H._circle_embedding([mymap[d] for d in D], angle=pi/2)
     return H
 
 
-def HoffmanGraph():
+def HoffmanGraph(immutable=False):
     r"""
     Return the Hoffman Graph.
 
     See the :wikipedia:`Hoffman_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3378,14 +3417,12 @@ def HoffmanGraph():
             9: [11, 13],
             10: [12, 15],
             11: [14],
-            13: [15]})
+            13: [15]},
+            name="Hoffman Graph", immutable=immutable)
 
     g._circle_embedding(list(range(8)))
     g._circle_embedding(list(range(8, 14)), radius=.7, shift=.5)
     g._circle_embedding([14, 15], radius=.1)
-
-    g.name("Hoffman Graph")
-
     return g
 
 
