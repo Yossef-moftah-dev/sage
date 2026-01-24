@@ -420,6 +420,9 @@ select = [
 "all.py" = [
   "F401", # Unused import - these files are by definition collections of imports.
 ]
+"src/sage/algebras/lie_conformal_algebras/examples.py" = [
+  "F401", # Unused import - reexports for convenience.
+]
 
 [tool.uv]
 # Don't use build isolation for sage (it's incompatible with meson-python's editable install)
