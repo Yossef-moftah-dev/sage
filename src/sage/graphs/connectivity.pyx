@@ -604,7 +604,6 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None,
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-
     if algorithm == "Tarjan_Boost":
         from sage.graphs.base.boost_graph import blocks_and_cut_vertices
         return blocks_and_cut_vertices(G, forbidden_vertices=forbidden_vertices)
