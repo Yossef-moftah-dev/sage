@@ -315,7 +315,7 @@ disables all rules that we do not already follow throughout the repository. Our 
 GitHub Action workflow requires ``ruff check --config .github/workflows/ruff.toml --preview``
 to pass. To speed up the code review process, developers should verify that this passes
 locally before submitting a PR. To make sure you are running the same version of ``ruff``
-locally as GitHub Actions, use the command
+locally as that is used by GitHub Actions, you can use the command
 ``uv run --frozen --only-group lint -- ruff check --config .github/workflows/ruff.toml --preview``.
 
 Developers are encouraged to locally run ``ruff check [path to changed files]``
@@ -328,7 +328,7 @@ code-style changes as this makes it harder for reviewers to evaluate the importa
 
 When working on PRs to improve our alignment with our linter rules, the ``--statistics``
 option can be passed to ``ruff`` to print out a list of all rules that are enabled in
-``pyproject.toml`` but are not currently followed throughout the repository and how many
+``pyproject.toml`` but are not currently followed throughout the repository, and how many
 times each rule is violated. This is useful for finding low-hanging fruit for formatting PRs.
 Developers can also use ``--select [RULE CODES]`` to override the list of rules enabled in
 ``pyproject.toml`` when testing additional rules to add to ``pyproject.toml``, or
