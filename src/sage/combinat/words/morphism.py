@@ -1275,18 +1275,15 @@ class WordMorphism(SageObject):
             raise NotImplementedError(
                 "cannot check alphabet inclusion for infinite alphabets")
 
-        # Build positions of target letters once; use it both for membership
-        # testing and for the relative-order check.
-        target_positions = {a: i for i, a in enumerate(target_alphabet)}
-        source_positions = []
+        targets = list(target_alphabet)
+        n_targets = len(targets)
+        idx = 0
         for a in source_alphabet:
-            pos = target_positions.get(a)
-            if pos is None:
+            while idx < n_targets and targets[idx] != a:
+                idx += 1
+            if idx == n_targets:
                 return False
-            source_positions.append(pos)
-
-        return all(p < q for p, q in zip(source_positions,
-                         source_positions[1:]))
+        return True
 
     def is_self_composable(self):
         r"""
