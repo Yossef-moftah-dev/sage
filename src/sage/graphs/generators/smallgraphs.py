@@ -45,6 +45,17 @@ def HarborthGraph(immutable=False):
         Harborth Graph: Graph on 52 vertices
         sage: g.is_regular(4)
         True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.HarborthGraph()
+        sage: h = graphs.HarborthGraph(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     g = Graph(':s_OGKI?@_?g[QABAo__YEFCp@?iIEbqHWuWLbbh?}[OfcXpGhNHdYPY_SgdYX]'
               'pZkfJPuo[lfZHys^mFcDs}`pG{UNNgoHC}DIgrI[qjMhTyDQrQlVydrBYmWkn',
@@ -470,6 +481,17 @@ def Cell600(embedding=1, immutable=False):
         True
         sage: g.is_vertex_transitive()
         True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.Cell600()
+        sage: h = graphs.Cell600(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     from sage.rings.polynomial.polynomial_ring import polygen
     from sage.rings.number_field.number_field import NumberField
@@ -551,6 +573,17 @@ def Cell120(immutable=False):
         sage: g.is_regular(4)
         True
         sage: g.is_vertex_transitive()
+        True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.Cell120()
+        sage: h = graphs.Cell120(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
         True
     """
     from sage.rings.polynomial.polynomial_ring import polygen
@@ -736,6 +769,17 @@ def HallJankoGraph(from_string=True, immutable=False):
 
         sage: gg = graphs.HallJankoGraph(from_string=False)  # long time # optional - internet
         sage: g.is_isomorphic(gg)  # long time # optional - internet
+        True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.HallJankoGraph()
+        sage: h = graphs.HallJankoGraph(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
         True
     """
     if from_string:
@@ -1125,6 +1169,17 @@ def BidiakisCube(immutable=False):
         True
         sage: g.chromatic_number()                                                      # needs sage.modules
         3
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.BidiakisCube()
+        sage: h = graphs.BidiakisCube(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     edge_dict = {
         0: [1, 6, 11], 1: [2, 5], 2: [3, 10], 3: [4, 9], 4: [5, 8],
@@ -1251,6 +1306,17 @@ def BlanusaFirstSnarkGraph(immutable=False):
         5
         sage: g.automorphism_group().cardinality()                                      # needs sage.groups
         8
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.BlanusaFirstSnarkGraph()
+        sage: h = graphs.BlanusaFirstSnarkGraph(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     from itertools import chain
     E1 = [(0, 5), (1, 17), (2, 14), (3, 8), (4, 17), (6, 11), (7, 17),
@@ -1294,6 +1360,17 @@ def BlanusaSecondSnarkGraph(immutable=False):
         5
         sage: g.automorphism_group().cardinality()                                      # needs sage.groups
         4
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.BlanusaSecondSnarkGraph()
+        sage: h = graphs.BlanusaSecondSnarkGraph(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     c0 = (-1, 0)
     c1 = (-1, 1)
@@ -1378,6 +1455,17 @@ def BrinkmannGraph(immutable=False):
         sage: ag = G.automorphism_group()                                               # needs sage.groups
         sage: ag.is_isomorphic(DihedralGroup(7))                                        # needs sage.groups
         True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.BrinkmannGraph()
+        sage: h = graphs.BrinkmannGraph(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     edge_dict = {
         0: [2, 5, 7, 13],
@@ -1434,6 +1522,17 @@ def BrouwerHaemersGraph(immutable=False):
     Its has as eigenvalues `20,2` and `-7`::
 
         sage: set(g.spectrum()) == {20,2,-7}                                            # needs sage.modules sage.rings.finite_rings
+        True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.BrouwerHaemersGraph()
+        sage: h = graphs.BrouwerHaemersGraph(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
         True
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1500,6 +1599,17 @@ def BuckyBall(immutable=False):
 
         sage: g = graphs.BuckyBall()  # long time
         sage: g.plot(vertex_labels=False, vertex_size=10).show()        # long time, needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.BuckyBall()
+        sage: h = graphs.BuckyBall(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     edges = [(0, 2), (0, 48), (0, 59), (1, 3), (1, 9), (1, 58),
              (2, 3), (2, 36), (3, 17), (4, 6), (4, 8), (4, 12),
@@ -1610,6 +1720,17 @@ def GossetGraph(immutable=False):
 
         sage: g.is_isomorphic(polytopes.Gosset_3_21().graph())  # not tested (~16s)
         True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.GossetGraph()
+        sage: h = graphs.GossetGraph(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     string = ('w~~~~rt{~Z\\ZxnvYZYmlfrb}|hDuhLlcmmMNf_^zzQGNYcP\\kcRZbaJjoNBx{'
               '?N~o^}?A`}F_Kbbm_[QZ\\_]Cj\\oN_dm{BzB{?]WIMM@tPQRYBYRPIuAyJgQv?'
@@ -1655,6 +1776,17 @@ def DoubleStarSnark(immutable=False):
         sage: g.automorphism_group().cardinality()                                      # needs sage.groups
         80
         sage: g.show()                                                                  # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = graphs.DoubleStarSnark()
+        sage: h = graphs.DoubleStarSnark(immutable=True)
+        sage: h.is_immutable()
+        True
+        sage: g.is_isomorphic(h)
+        True
     """
     d = {0: [1, 14, 15],
          1: [0, 2, 11],
