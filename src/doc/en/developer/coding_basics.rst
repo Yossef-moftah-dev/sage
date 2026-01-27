@@ -1380,7 +1380,7 @@ framework. Here is a comprehensive list:
       This is the docstring of an ``__add__`` method. The following
       example tests it, but ``__add__`` is not written anywhere::
 
-          sage: 1+1 # indirect doctest
+          sage: 1+1  # indirect doctest
           2
 
 Per coding style (:ref:`section-coding-python`), the magic comment
