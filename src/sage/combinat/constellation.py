@@ -386,7 +386,7 @@ class Constellation_class(Element):
         if prod(self._g, Sd.one()) != Sd.one():
             raise ValueError("the product is not identity")
 
-        if self._connected and not perms_are_connected(self._g, d):
+        if self._connected and not perms_are_connected(self._g):
             raise ValueError("not connected")
 
     def __copy__(self):
@@ -444,8 +444,7 @@ class Constellation_class(Element):
         """
         if self._connected:
             return True
-        else:
-            return perms_are_connected(self._g, self.degree())
+        return perms_are_connected(self._g)
 
     def connected_components(self):
         """
@@ -1048,7 +1047,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         S = self._sym
         for p in product(S, repeat=self._length - 1):
-            if self._connected and not perms_are_connected(p, self._degree):
+            if self._connected and not perms_are_connected(p):
                 continue
             yield self(list(p) + [None], check=False)
 
@@ -1453,7 +1452,7 @@ class Constellations_p(UniqueRepresentation, Parent):
         S = self._cd._sym
         profile = list(self._profile)[:-1]
         for p in product(*[S.conjugacy_class(pi) for pi in profile]):
-            if self._cd._connected and not perms_are_connected(p, self._cd._degree):
+            if self._cd._connected and not perms_are_connected(p):
                 continue
             c = self._cd(list(p) + [None], check=False)
             if c.profile() == self._profile:
@@ -1554,31 +1553,29 @@ def perms_sym_init(g, sym=None):
         return sym, None
 
 
-def perms_are_connected(g, n):
+def perms_are_connected(g):
     """
     Check that the action of the generated group is transitive.
 
     INPUT:
 
-    - ``g`` -- list of permutations of `[0, n-1]` (in a SymmetricGroup)
-
-    - ``n`` -- integer
+    - ``g`` -- list of permutations (in a SymmetricGroup)
 
     EXAMPLES::
 
         sage: from sage.combinat.constellation import perms_are_connected
         sage: S = SymmetricGroup(range(3))
-        sage: perms_are_connected([S([0,1,2]),S([0,2,1])],3)
+        sage: perms_are_connected([S([0,1,2]), S([0,2,1])])
         False
-        sage: perms_are_connected([S([0,1,2]),S([1,2,0])],3)
+        sage: perms_are_connected([S([0,1,2]), S([1,2,0])])
         True
     """
-    G = Graph()
     if g:
-        G.add_vertices(g[0].domain())
-    for p in g:
-        G.add_edges(p.dict().items(), loops=False)
-    return G.is_connected()
+        E = [(u, v) for p in g for u, v in p.dict().items() if u != v]
+        G = Graph([g[0].domain(), E],
+                  format="vertices_and_edges")
+        return G.is_connected()
+    return True
 
 
 def perms_canonical_labels_from(x, y, j0, verbose=False):
