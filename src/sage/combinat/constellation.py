@@ -762,11 +762,9 @@ class Constellation_class(Element):
             g2 ('a','b','e','d','c')
         """
         if perm is not None:
-            g = [[None] * self.degree() for _ in range(self.length())]
-            for i in range(len(perm.domain())):
-                for k in range(self.length()):
-                    g[k][perm(i)] = perm(self._g[k](i))
-            return Constellation(g=g, check=False, mutable=self.is_mutable())
+            perm_inv = perm.inverse()
+            g = [perm_inv * g_k * perm for g_k in self._g]
+            return self.parent(g)
 
         if return_map:
             try:
@@ -1481,7 +1479,7 @@ def perm_sym_domain(g):
             return [int(x) for x in domain]
         else:
             return domain
-    elif parent(g) in Groups:
+    elif parent(g) in Groups():
         return g.domain()
     else:
         raise TypeError
