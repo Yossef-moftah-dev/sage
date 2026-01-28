@@ -1137,13 +1137,12 @@ class Constellations_ld(UniqueRepresentation, Parent):
             d = self._degree
             while True:
                 g = [Sd.random_element() for _ in range(l - 1)]
-                G = PermutationGroup(g)
-                if G.degree() == d and G.is_transitive():
+                if perms_are_connected(g):
                     break
         else:
             g = [Sd.random_element() for _ in range(l - 1)]
 
-        return self([sigma.domain() for sigma in g] + [None], mutable=mutable)
+        return self(g + [None], mutable=mutable)
 
     def _element_constructor_(self, *data, **options):
         r"""
