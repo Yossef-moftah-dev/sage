@@ -35,7 +35,6 @@ EXAMPLES::
     True
     sage: c.euler_characteristic()
     2
-    sage: TestSuite(C).run()
 """
 
 # ****************************************************************************
@@ -115,7 +114,8 @@ def Constellations(*data, **options):
     if profile:
         profile = tuple(map(Partition, profile))
         return Constellations_p(profile, domain, bool(connected))
-    elif degree is not None and length is not None:
+
+    if degree is not None and length is not None:
         if domain is None:
             sym = SymmetricGroup(degree)
         else:
@@ -125,8 +125,8 @@ def Constellations(*data, **options):
 
         return Constellations_ld(Integer(length), Integer(degree),
                                  sym, bool(connected))
-    else:
-        raise ValueError("you must either provide a profile or a pair (length, degree)")
+
+    raise ValueError("you must either provide a profile or a pair (length, degree)")
 
 
 def Constellation(g=None, mutable=False, connected=True, check=True):
@@ -442,9 +442,7 @@ class Constellation_class(Element):
             sage: c.is_connected()
             True
         """
-        if self._connected:
-            return True
-        return perms_are_connected(self._g)
+        return self._connected or perms_are_connected(self._g)
 
     def connected_components(self):
         """
@@ -941,6 +939,8 @@ class Constellations_ld(UniqueRepresentation, Parent):
             sage: TestSuite(Constellations(2, 3, connected=False)).run()
 
             sage: TestSuite(Constellations(3, 4, domain='abcd')).run()
+
+            sage: TestSuite(Constellations(3, 0, connected=False)).run()
         """
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         Parent.__init__(self, category=FiniteEnumeratedSets())
@@ -967,8 +967,10 @@ class Constellations_ld(UniqueRepresentation, Parent):
             True
             sage: Constellations(1, 2, connected=False).is_empty()
             False
+            sage: Constellations(1, 0).is_empty()
+            True
         """
-        return self._connected and self._length == 1 and self._degree > 1
+        return self._connected and self._length == 1 and self._degree != 1
 
     def __contains__(self, elt):
         r"""
@@ -1001,10 +1003,12 @@ class Constellations_ld(UniqueRepresentation, Parent):
                 self(elt, check=True)
             except (ValueError, TypeError):
                 return False
-            else:
-                return True
-        elif not isinstance(elt, Constellation_class):
+
+            return True
+
+        if not isinstance(elt, Constellation_class):
             return False
+
         return (elt.parent() is self or
                 (elt.length() == self._length and
                  elt.degree() == self._degree and
@@ -1033,16 +1037,25 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: const = Constellations(3,3); const
+            sage: const = Constellations(3, 3)
+            sage: const
             Connected constellations of length 3 and degree 3 on {1, 2, 3}
-            sage: len([v for v in const])
+            sage: len(const)
             26
+
+        TESTS::
+
+            sage: list(Constellations(3, 0, connected=False))
+            [Constellation of length 3 and degree 0
+             g0 ()
+             g1 ()
+             g2 ()]
         """
         from itertools import product
 
-        if self._length == 1:
-            if self._degree == 1:
-                yield self([[0]])
+        if not self._length:
+            if not self._connected:
+                yield self([])
             return
 
         S = self._sym
@@ -1073,6 +1086,9 @@ class Constellations_ld(UniqueRepresentation, Parent):
             return factorial(self._degree) ** (k-1)
 
         # recurrence from :oeis:`A220754`
+        if not self._degree:
+            return ZZ.zero()
+
         a = []
         for n in range(self._degree):
             n = ZZ(n)
@@ -1189,7 +1205,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
             g1 ('a','b','c','d','e')
             g2 ('a')('b')('c')('d')('e')
 
-            sage: Constellations(0, 0).an_element()
+            sage: Constellations(0, 0, connected=False).an_element()
             Constellation of length 0 and degree 0
 
             sage: Constellations(1, 1).an_element()
@@ -1201,18 +1217,16 @@ class Constellations_ld(UniqueRepresentation, Parent):
             ...
             EmptySetError
         """
+        from sage.categories.sets_cat import EmptySetError
         if self.is_empty():
-            from sage.categories.sets_cat import EmptySetError
             raise EmptySetError
 
-        if self._degree == 0 and self._length == 0:
-            return self([])
-        elif self._length == 1:
-            return self(self._sym.one())
-
-        d = self._degree
         domain = self._sym.domain().list()
         if self._connected:
+            if self._length == 1 and self._degree == 1:
+                return self([None])
+
+            d = self._degree
             g = [[domain[d - 1]] + domain[:d - 1], domain[1:] + [domain[0]]]
             g += [domain[:]] * (self._length - 2)
         else:
@@ -1569,12 +1583,32 @@ def perms_are_connected(g):
         False
         sage: perms_are_connected([S([0,1,2]), S([1,2,0])])
         True
+
+    Constellations of degree 0 are not connected::
+
+        sage: S = SymmetricGroup(0)
+        sage: perms_are_connected([S([]), S([])])
+        False
     """
     if g:
-        E = [(u, v) for p in g for u, v in p.dict().items() if u != v]
-        G = Graph([g[0].domain(), E],
-                  format="vertices_and_edges")
-        return G.is_connected()
+        if not g[0].domain():
+            return False
+
+        D = g[0].domain()
+        x0 = D[0]
+        todo = [x0]
+        orbit = {x0}
+
+        while todo:
+            x = todo.pop()
+            for p in g:
+                y = p(x)
+                if y not in orbit:
+                    orbit.add(y)
+                    todo.append(y)
+
+        return len(orbit) == len(D)
+
     return True
 
 
