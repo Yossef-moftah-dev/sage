@@ -1072,6 +1072,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         verbose("Adjoining X-coordinates of %s-torsion points" % n)
 
         F = self.base_ring()
+
+        # If the curve is supersingular, the p-torsion is trivial,
+        # so we may ignore the p-primary part of n right away.
+        if not F(n) and self.is_supersingular():
+            n = n.prime_to_m_part(F.characteristic())
+
         f = self.division_polynomial(n).radical()
 
         if n == 2 or f.is_constant():
