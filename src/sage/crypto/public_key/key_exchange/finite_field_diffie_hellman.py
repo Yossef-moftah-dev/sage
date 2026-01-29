@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
 class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
 
-    def __init__(self, p: Integer | int, generator: Integer | IntegerMod_abstract | int, proof: bool = True) -> None:
+    def __init__(self, p: Integer | int, generator: Integer | IntegerMod_abstract | int, proof: bool | None = None) -> None:
         r"""
         Create an instance of the Diffie-Hellman key exchange scheme using the
         given prime ``p`` and base ``g``.
@@ -57,11 +57,12 @@ class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
         - ``generator`` -- base for the key exchange, (coerceable to) an element of
           `\GF{p}` from `2` to `p - 2`
 
-        - ``proof`` -- (default: ``True``) whether to require a proof that
-          ``p`` is prime. If ``False``, a probabilistic test can be used for
-          checking that ``p`` is prime. This should be set to ``False``
-          when using large (cryptographic size) primes, otherwise checking
-          primality will take too long.
+        - ``proof`` -- whether to require a proof that ``p`` is prime.
+          If ``False``, a probabilistic test is used to check that ``p`` is
+          prime. This should be set to ``False`` when using large
+          (cryptographic size) primes, otherwise checking primality will take
+          too long. If this is not specified, then the default behaviour is
+          to use the current value of `proof.arithmetic()`.
 
         REFERENCES:
 
@@ -78,7 +79,7 @@ class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
         (see [KK2003]_)::
 
             sage: p = 2^8192 - 2^8128 - 1 + 2^64 * (round(2^8062 * pi) + 4743158)
-            sage: DH = key_exchange.FiniteFieldDiffieHellman(13, 2)
+            sage: DH = key_exchange.FiniteFieldDiffieHellman(p, 2, proof=False)
             sage: alice_sk = DH.secret_key()
             sage: alice_pk = DH.public_key(alice_sk)
             sage: bob_sk = DH.secret_key()
@@ -97,12 +98,8 @@ class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
             raise ValueError('p must be at least 5')
 
         self._p = Integer(p)
-        if proof:
-            # The modn implementation checks that ``p`` is prime
-            self._field = GF(self._p, impl='modn')
-        else:
-            with WithProof('arithmetic', False):
-                self._field = GF(self._p, impl='modn')
+        # The modn implementation checks that ``p`` is prime
+        self._field = GF(self._p, impl='modn', proof=proof)
 
         self._generator = self._field(generator)
 
