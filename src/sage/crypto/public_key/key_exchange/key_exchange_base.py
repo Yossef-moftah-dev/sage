@@ -33,7 +33,10 @@ from typing import Any, Self
 from sage.misc.superseded import experimental_warning
 from sage.structure.sage_object import SageObject
 
-experimental_warning(41218, "SageMath's key exchange functionality is experimental and might change in the future.")
+experimental_warning(
+    41218,
+    "SageMath's key exchange functionality is experimental and might change in the future.",
+)
 
 
 class KeyExchangeBase(SageObject):

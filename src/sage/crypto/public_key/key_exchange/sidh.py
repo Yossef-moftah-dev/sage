@@ -46,7 +46,11 @@ if TYPE_CHECKING:
     from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_finite_field
     from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
 
-    PublicKeySIDH = tuple[EllipticCurve_finite_field, EllipticCurvePoint_finite_field, EllipticCurvePoint_finite_field]
+    PublicKeySIDH = tuple[
+        EllipticCurve_finite_field,
+        EllipticCurvePoint_finite_field,
+        EllipticCurvePoint_finite_field,
+    ]
     SecretKeySIDH = Integer | int
 
 
@@ -78,6 +82,7 @@ class SIDH(KeyExchangeBase):
                      See https://github.com/sagemath/sage/issues/41218 for details.
         sage: TestSuite(toy_sidh).run()
     """
+
     def __init__(
         self,
         E: EllipticCurve_finite_field,
@@ -150,7 +155,7 @@ class SIDH(KeyExchangeBase):
             if (alpha != 0 and alpha % 2 == 0) or (alpha == 0 and beta % 2 == 0):
                 assert r**2 == s
                 return r
-            assert (-r)**2 == s
+            assert (-r) ** 2 == s
             return -r
 
         def trial_points():
@@ -163,41 +168,52 @@ class SIDH(KeyExchangeBase):
                 if E.is_on_curve(x0, y0):
                     yield E(x0, y0)
 
-        PA_mults = (E(-3 + 2 * canonical_square_root(2), 0), E(-3 - 2 * canonical_square_root(2), 0))
+        PA_mults = (
+            E(-3 + 2 * canonical_square_root(2), 0),
+            E(-3 - 2 * canonical_square_root(2), 0),
+        )
         for R in trial_points():
             PA = (3**e_B) * R
-            if 2**(e_A - 1) * PA in PA_mults:
+            if 2 ** (e_A - 1) * PA in PA_mults:
                 break
         else:
-            raise ValueError('failed to find PA, try using SIDH constructor directly and specify all parameters')
+            raise ValueError(
+                'failed to find PA, try using SIDH constructor directly and specify all parameters'
+            )
 
         E_00 = E(0, 0)
         for R in trial_points():
             QA = (3**e_B) * R
-            if 2**(e_A - 1) * QA == E_00:
+            if 2 ** (e_A - 1) * QA == E_00:
                 break
         else:
-            raise ValueError('failed to find QA, try using SIDH constructor directly and specify all parameters')
+            raise ValueError(
+                'failed to find QA, try using SIDH constructor directly and specify all parameters'
+            )
 
         for c in range(p):
             fc = f.subs(x=c)
             if not Fp(fc).is_square():
                 continue
-            PB = 2**(e_A - 1) * E(c, canonical_square_root(fc))
+            PB = 2 ** (e_A - 1) * E(c, canonical_square_root(fc))
             if PB.order() == 3**e_B:
                 break
         else:
-            raise ValueError('failed to find PB, try using SIDH constructor directly and specify all parameters')
+            raise ValueError(
+                'failed to find PB, try using SIDH constructor directly and specify all parameters'
+            )
 
         for c in range(p):
             fc = f.subs(x=c)
             if Fp(fc).is_square() or not Fp2(fc).is_square():
                 continue
-            QB = 2**(e_A - 1) * E(c, canonical_square_root(fc))
+            QB = 2 ** (e_A - 1) * E(c, canonical_square_root(fc))
             if QB.order() == 3**e_B:
                 break
         else:
-            raise ValueError('failed to find QB, try using SIDH constructor directly and specify all parameters')
+            raise ValueError(
+                'failed to find QB, try using SIDH constructor directly and specify all parameters'
+            )
         return cls(E, PA, QA, PB, QB)
 
     @classmethod
@@ -301,14 +317,16 @@ class SIDH(KeyExchangeBase):
         sidh.rename(f'sidh-{name}')
         return sidh
 
-    def parameters(self) -> tuple[
-            Integer,
-            EllipticCurve_finite_field,
-            EllipticCurvePoint_finite_field,
-            EllipticCurvePoint_finite_field,
-            EllipticCurvePoint_finite_field,
-            EllipticCurvePoint_finite_field
-            ]:
+    def parameters(
+        self,
+    ) -> tuple[
+        Integer,
+        EllipticCurve_finite_field,
+        EllipticCurvePoint_finite_field,
+        EllipticCurvePoint_finite_field,
+        EllipticCurvePoint_finite_field,
+        EllipticCurvePoint_finite_field,
+    ]:
         r"""
         Return the parameter set of the SIDH instance.
 
@@ -360,7 +378,9 @@ class SIDH(KeyExchangeBase):
 
         Alice's public key as a tuple `(E_A, P'_B, Q'_B)`.
         """
-        phi_A, _ = self.secret_isogeny_path(self._E, alice_secret_key, self._PA, self._QA)
+        phi_A, _ = self.secret_isogeny_path(
+            self._E, alice_secret_key, self._PA, self._QA
+        )
         return phi_A.codomain(), phi_A(self._PB), phi_A(self._QB)
 
     def bob_public_key(self, bob_secret_key: SecretKeySIDH) -> PublicKeySIDH:
@@ -379,7 +399,9 @@ class SIDH(KeyExchangeBase):
         phi_B, _ = self.secret_isogeny_path(self._E, bob_secret_key, self._PB, self._QB)
         return phi_B.codomain(), phi_B(self._PA), phi_B(self._QA)
 
-    def alice_compute_shared_secret(self, alice_secret_key: SecretKeySIDH, bob_public_key: PublicKeySIDH) -> Integer:
+    def alice_compute_shared_secret(
+        self, alice_secret_key: SecretKeySIDH, bob_public_key: PublicKeySIDH
+    ) -> Integer:
         r"""
         Compute the shared secret using Alice's secret key and Bob's public key.
         """
@@ -388,7 +410,9 @@ class SIDH(KeyExchangeBase):
         E_AB = phi_A1.codomain()
         return E_AB.j_invariant()
 
-    def bob_compute_shared_secret(self, bob_secret_key: SecretKeySIDH, alice_public_key: PublicKeySIDH) -> Integer:
+    def bob_compute_shared_secret(
+        self, bob_secret_key: SecretKeySIDH, alice_public_key: PublicKeySIDH
+    ) -> Integer:
         r"""
         Compute the shared secret using Bob's secret key and Alice's public key.
         """
@@ -397,12 +421,13 @@ class SIDH(KeyExchangeBase):
         E_BA = phi_B1.codomain()
         return E_BA.j_invariant()
 
-    def secret_isogeny_path(self,
-                            start_curve: EllipticCurve_finite_field,
-                            secret_key: SecretKeySIDH,
-                            P: EllipticCurvePoint_finite_field,
-                            Q: EllipticCurvePoint_finite_field,
-                            ) -> tuple[EllipticCurveHom_composite, list[Integer]]:
+    def secret_isogeny_path(
+        self,
+        start_curve: EllipticCurve_finite_field,
+        secret_key: SecretKeySIDH,
+        P: EllipticCurvePoint_finite_field,
+        Q: EllipticCurvePoint_finite_field,
+    ) -> tuple[EllipticCurveHom_composite, list[Integer]]:
         r"""
         Compute the secret isogeny and path of j-invariants.
         The kernel of returned isogeny is generated by ``P + secret_key * Q``.

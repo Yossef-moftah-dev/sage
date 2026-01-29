@@ -35,7 +35,6 @@ from sage.crypto.public_key.key_exchange.key_exchange_base import (
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
-from sage.structure.proof.proof import WithProof
 
 if TYPE_CHECKING:
     from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
@@ -43,8 +42,12 @@ if TYPE_CHECKING:
 
 
 class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
-
-    def __init__(self, p: Integer | int, generator: Integer | IntegerMod_abstract | int, proof: bool | None = None) -> None:
+    def __init__(
+        self,
+        p: Integer | int,
+        generator: Integer | IntegerMod_abstract | int,
+        proof: bool | None = None,
+    ) -> None:
         r"""
         Create an instance of the Diffie-Hellman key exchange scheme using the
         given prime ``p`` and base ``g``.
@@ -130,7 +133,7 @@ class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
             sage: DH.public_key(4)
             3
         """
-        return self._generator ** secret_key
+        return self._generator**secret_key
 
     def compute_shared_secret(self, secret_key, public_key) -> IntegerMod_abstract:
         """
@@ -148,7 +151,7 @@ class FiniteFieldDiffieHellman(CommutativeKeyExchangeBase):
             sage: DH.compute_shared_secret(11, 13)
             4
         """
-        return self._field(public_key ** secret_key)
+        return self._field(public_key**secret_key)
 
     def parameters(self) -> tuple[FiniteField_prime_modn, IntegerMod_abstract]:
         """
