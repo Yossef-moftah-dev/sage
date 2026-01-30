@@ -641,12 +641,11 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return 'Group([%s])' % (', '.join(g._gap_init_() for g in self.gens()))
 
-    @cached_method
     def gap(self):
         r"""
         This method from :class:`sage.groups.libgap_wrapper.ParentLibGAP` is added in order to achieve
         compatibility and have :class:`sage.groups.libgap_morphism.GroupHomset_libgap` work for permutation
-        groups, as well
+        groups, as well.
 
         OUTPUT: an instance of :class:`sage.libs.gap.element.GapElement`
         representing this group
@@ -695,9 +694,10 @@ class PermutationGroup_generic(FiniteGroup):
             sage: g1.IsIdenticalObj(S._libgap_())
             true
         """
-        if self._libgap is not None:
-            return self._libgap
-        self._libgap = super()._libgap_()
+        if self._libgap is None:
+            # why is self._libgap = libgap.Group(self._gens) and
+            # adding methods to permgroup_named slower?
+            self._libgap = super()._libgap_()
         return self._libgap
 
     # Override the default _libgap_ to use the caching as self._libgap
@@ -1626,11 +1626,10 @@ class PermutationGroup_generic(FiniteGroup):
                 else:
                     libgap.Add(Xp, x)
             X = Xp
-        return SetPartition([
-            [self._domain_from_gap[Integer(x)]
-             for i in part
-             for x in O[i]] for part in P] +
-             [[x] for x in self.fixed_points()])
+        return SetPartition([[self._domain_from_gap[Integer(x)]
+                              for i in part
+                              for x in O[i]] for part in P] +
+                            [[x] for x in self.fixed_points()])
 
     def representative_action(self, x, y):
         r"""
