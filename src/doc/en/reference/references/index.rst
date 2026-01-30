@@ -5134,6 +5134,11 @@ REFERENCES:
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119-131.
 
+.. [MPSW25] Travis Morrison, Lorenz Panny, Jana Sotáková, and Michael Wills:
+            *The SEA algorithm for endomorphisms of supersingular elliptic curves*
+            (2025).
+            :arxiv:`2501.16321`
+
 .. [Most2019] Jacob Mostovoy.
               *The pure cactus group is residually nilpotent*.
               Archiv der Math., **113** (2019). pp. 229-235.
@@ -6810,6 +6815,10 @@ REFERENCES:
 .. [Vai1994] \I. Vaisman, *Lectures on the Geometry of Poisson
              Manifolds*, Springer Basel AG (Basel) (1994);
              :doi:`10.1007/978-3-0348-8495-2`
+
+.. [VT2001] Adam Van Tuyl: *Computing the degree of the field of `n`‑torsion points*
+            (2001).
+            https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf
 
 .. [Var1984] \V. S. Varadarajan. *Lie groups, Lie algebras, and their
              representations*. Reprint of the 1974 edition. Graduate Texts in
