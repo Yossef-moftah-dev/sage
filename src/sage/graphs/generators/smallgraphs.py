@@ -2096,11 +2096,16 @@ def ClebschGraph(immutable=False):
     return g
 
 
-def CoxeterGraph():
+def CoxeterGraph(immutable=False):
     r"""
     Return the Coxeter graph.
 
     See the :wikipedia:`Coxeter_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2115,26 +2120,21 @@ def CoxeterGraph():
         4
         sage: g.show(figsize=[10, 10])          # long time                             # needs sage.plot
     """
-    g = Graph({
-            27: [6, 22, 14],
-            24: [0, 7, 18],
-            25: [8, 15, 2],
-            26: [10, 16, 23],
-            }, pos={})
-
-    g.add_cycle(list(range(24)))
-    g.add_edges([(5, 11), (9, 20), (12, 1), (13, 19), (17, 4), (3, 21)])
-
+    from itertools import chain
+    E1 = ((0, 24), (2, 25), (6, 27), (7, 24), (8, 25), (10, 26), (14, 27),
+          (15, 25), (16, 26), (18, 24), (22, 27), (23, 26))
+    E2 = ((i, i + 1) for i in range(23))
+    E3 = ((0, 23),)
+    E4 = ((5, 11), (9, 20), (12, 1), (13, 19), (17, 4), (3, 21))
+    g = Graph([range(28), chain(E1, E2, E3, E4)], format="vertices_and_edges",
+              name="Coxeter Graph", immutable=immutable)
     g._circle_embedding(list(range(24)))
     g._circle_embedding([24, 25, 26], radius=.5)
     g._pos[27] = (0, 0)
-
-    g.name("Coxeter Graph")
-
     return g
 
 
-def CubeplexGraph(embedding='LM'):
+def CubeplexGraph(embedding='LM', immutable=False):
     r"""
     Return the Cubeplex graph.
 
@@ -2176,6 +2176,9 @@ def CubeplexGraph(embedding='LM'):
 
       - ``'NT'`` displays the embedding as shown for the ``Cubeplex`` by Norine
         and Thomas [NT2007]_
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -2229,17 +2232,15 @@ def CubeplexGraph(embedding='LM'):
 
     - Janmenjaya Panda (2024-08-03)
     """
+    from itertools import chain
+    from math import pi
+
     if embedding == 'FL':
-        from math import pi
-
-        G = Graph(12, name='Cubeplex Graph')
-        G.add_cycle(list(range(12)))
-
-        G.add_edges([
-            (0, 3), (1, 6), (2, 8),
-            (4, 9), (5, 11), (7, 10)
-        ])
-
+        E1 = ((i, i + 1) for i in range(11))
+        E2 = ((0, 11),)
+        E3 = ((0, 3), (1, 6), (2, 8), (4, 9), (5, 11), (7, 10))
+        G = Graph([range(12), chain(E1, E2, E3)], format="vertices_and_edges",
+                  name='Cubeplex Graph', immutable=immutable)
         G._circle_embedding(list(range(12)), angle=2*pi/3)
 
     elif embedding == 'NT':
@@ -2258,19 +2259,13 @@ def CubeplexGraph(embedding='LM'):
             11: (4, -1),
         }
 
-        G = Graph(12, pos=pos_dict, name='Cubeplex Graph')
-        G.add_edges([
-            (0, 2), (0, 4), (0, 6),
-            (1, 3), (1, 5), (1, 6),
-            (2, 7), (2, 8), (3, 7),
-            (3, 8), (4, 9), (4, 10),
-            (5, 9), (5, 10), (6, 11),
-            (7, 11), (8, 9), (10, 11)
-        ])
+        edges = ((0, 2), (0, 4), (0, 6), (1, 3), (1, 5), (1, 6),
+                 (2, 7), (2, 8), (3, 7), (3, 8), (4, 9), (4, 10),
+                 (5, 9), (5, 10), (6, 11), (7, 11), (8, 9), (10, 11))
+        G = Graph([range(12), edges], format="vertices_and_edges", pos=pos_dict,
+                  name='Cubeplex Graph', immutable=immutable)
 
     elif embedding == 'LM':
-        from math import pi
-
         pos_dict = {
             8: (0, 1),
             9: (1, 0),
@@ -2282,13 +2277,11 @@ def CubeplexGraph(embedding='LM'):
             t = pi * (v+2)/4
             pos_dict[v] = (-2*cos(t), 2*sin(t))
 
-        G = Graph(12, pos=pos_dict, name='Cubeplex Graph')
-
-        G.add_cycle(list(range(8)))
-        G.add_edges([
-            (0, 8), (1, 11), (2, 9), (3, 11), (4, 8),
-            (5, 10), (6, 9), (7, 10), (8, 9), (10, 11)
-        ])
+        edges = ((0, 1), (0, 7), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7),
+                 (0, 8), (1, 11), (2, 9), (3, 11), (4, 8),
+                 (5, 10), (6, 9), (7, 10), (8, 9), (10, 11))
+        G = Graph([range(12), edges], format="vertices_and_edges", pos=pos_dict,
+                  name='Cubeplex Graph', immutable=immutable)
 
     else:
         raise ValueError("parameter 'embedding' must be 'FL', 'NT' or 'LM'")
@@ -2296,13 +2289,18 @@ def CubeplexGraph(embedding='LM'):
     return G
 
 
-def DejterGraph():
+def DejterGraph(immutable=False):
     r"""
     Return the Dejter graph.
 
     The Dejter graph is obtained from the binary 7-cube by deleting a copy of
     the Hamming code of length 7. It is 6-regular, with 112 vertices and 336
     edges. For more information, see the :wikipedia:`Dejter_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2321,6 +2319,8 @@ def DejterGraph():
     g.delete_vertices(["".join(map(str, x))
                        for x in HammingCode(FiniteField(2), 3)])
     g.name("Dejter Graph")
+    if immutable:
+        return g.copy(immutable=True)
     return g
 
 
@@ -2385,13 +2385,18 @@ def DurerGraph():
     return G
 
 
-def DyckGraph():
+def DyckGraph(immutable=False):
     """
     Return the Dyck graph.
 
     For more information, see the `MathWorld article on the Dyck graph
     <http://mathworld.wolfram.com/DyckGraph.html>`_ or the
     :wikipedia:`Dyck_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2475,7 +2480,8 @@ def DyckGraph():
         0O27: [0O16, 0O10,   0O37], 0O37: [0O27,   0O34, 0O32],
     }
 
-    return Graph(edge_dict, pos=pos_dict, name="Dyck graph")
+    return Graph(edge_dict, format="dict_of_lists", pos=pos_dict,
+                 name="Dyck graph", immutable=immutable)
 
 
 def HortonGraph():
@@ -2547,11 +2553,16 @@ def HortonGraph():
     return g
 
 
-def EllinghamHorton54Graph():
+def EllinghamHorton54Graph(immutable=False):
     r"""
     Return the Ellingham-Horton 54-graph.
 
     For more information, see the :wikipedia:`Ellingham-Horton_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2593,7 +2604,7 @@ def EllinghamHorton54Graph():
         45: [51], 46: [49], 50: [52], 51: [53], 52: [53]}
 
     g = Graph(data=edge_dict, format='dict_of_lists',
-              name="Ellingham-Horton 54-graph")
+              name="Ellingham-Horton 54-graph", immutable=immutable)
 
     # The set of vertices on top is 0..15
     # Bottom left is 16..33
@@ -2624,11 +2635,16 @@ def EllinghamHorton54Graph():
     return g
 
 
-def EllinghamHorton78Graph():
+def EllinghamHorton78Graph(immutable=False):
     r"""
     Return the Ellingham-Horton 78-graph.
 
     For more information, see the :wikipedia:`Ellingham%E2%80%93Horton_graph`
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2674,7 +2690,8 @@ def EllinghamHorton78Graph():
             55: [56, 59], 56: [57], 57: [58], 58: [75], 59: [75],
             60: [61, 64], 61: [62, 71], 62: [63, 77], 63: [67],
             64: [65, 69], 65: [77], 66: [70, 73], 67: [68, 73],
-            68: [69, 76], 70: [71, 76], 76: [77]}, pos={})
+            68: [69, 76], 70: [71, 76], 76: [77]}, format="dict_of_lists",
+            name="Ellingham-Horton 78-graph", immutable=immutable)
 
     g._circle_embedding(list(range(15)), center=(-2.5, 1.5))
     g._circle_embedding(list(range(15, 30)), center=(-2.5, -1.5))
@@ -2697,7 +2714,6 @@ def EllinghamHorton78Graph():
     g._line_embedding([66, 73, 67, 68, 69], first=(1.2, -2), last=(-.8, -2))
     g._line_embedding([66, 70, 71], first=(.7, -1.5), last=(-1, -1.5))
 
-    g.name("Ellingham-Horton 78-graph")
     return g
 
 
