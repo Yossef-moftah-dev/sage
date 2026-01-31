@@ -6816,7 +6816,7 @@ REFERENCES:
              Manifolds*, Springer Basel AG (Basel) (1994);
              :doi:`10.1007/978-3-0348-8495-2`
 
-.. [VT2001] Adam Van Tuyl: *Computing the degree of the field of `n`‑torsion points*
+.. [VT2001] Adam Van Tuyl: *Computing the degree of the field of 𝑛‑torsion points*
             (2001).
             https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf
 

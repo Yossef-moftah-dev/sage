@@ -17,6 +17,8 @@ AUTHORS:
 - Lorenz Panny (2023): ``special_supersingular_curve()``
 
 - Martin Grenouilloux, Gareth Ma (2024-09): ``EllipticCurve_with_prime_order()``
+
+- Lorenz Panny (2026): :meth:`EllipticCurve_finite_field.division_field()``
 """
 
 # ****************************************************************************

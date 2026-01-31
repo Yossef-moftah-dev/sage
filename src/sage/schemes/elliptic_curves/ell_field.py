@@ -990,6 +990,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         .. SEEALSO::
 
+            This method has a faster specialized implementation for finite base fields;
+            see :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.division_field`.
+
             To compute a basis of the `n`-torsion once the base field
             has been extended, you may use
             :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
