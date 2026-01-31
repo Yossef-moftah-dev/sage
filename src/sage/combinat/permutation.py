@@ -1309,7 +1309,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([]).sign()
             1
         """
-        return (-1)**(len(self) - len(self.to_cycles()))
+        return Integer((-1)**(len(self) - len(self.to_cycles())))
 
     # one can also use sign as an alias for signature
     sign = signature
@@ -1619,21 +1619,23 @@ class Permutation(CombinatorialElement):
         l = len(p)
         # lightning fast if the length is less than 3
         # (is it really useful?)
+        zero = Integer(0)
+        one = Integer(1)
         if l < 4:
             if l == 0:
                 return []
             if l == 1:
-                return [0]
+                return [zero]
             if l == 2:
-                return [p[0] - 1, 0]
+                return [Integer(p[0] - 1), zero]
             if l == 3:
                 if p[0] == 1:
-                    return [0, p[1] - 2, 0]
+                    return [zero, Integer(p[1] - 2), zero]
                 if p[0] == 2:
                     if p[1] == 1:
-                        return [1, 0, 0]
-                    return [2, 0, 0]
-                return [p[1], 1, 0]
+                        return [one, zero, zero]
+                    return [Integer(2), zero, zero]
+                return [Integer(p[1]), one, zero]
         # choose the best one
         if l < 411:
             return self._to_inversion_vector_small()
@@ -1691,7 +1693,7 @@ class Permutation(CombinatorialElement):
         for pi in reversed(p):
             checked[pi] = 0
             iv[pi] = sum(checked[pi:])
-        return iv[1:]
+        return [Integer(a) for a in iv[1:]]
 
     def _to_inversion_vector_divide_and_conquer(self) -> list:
         r"""
@@ -1757,7 +1759,7 @@ class Permutation(CombinatorialElement):
             return merge_and_countv(sort_and_countv(L[:l]),
                                     sort_and_countv(L[l:]))
 
-        return sort_and_countv(self._list)[0]
+        return [Integer(a) for a in sort_and_countv(self._list)[0]]
 
     def inversions(self) -> list:
         r"""
@@ -2027,8 +2029,8 @@ class Permutation(CombinatorialElement):
         """
         if k > len(self):
             return 0
-        return sum(1 for pos in itertools.combinations(self, k)
-                   if all(pos[i] < pos[i + 1] for i in range(k - 1)))
+        return Integer(sum(1 for pos in itertools.combinations(self, k)
+                           if all(pos[i] < pos[i + 1] for i in range(k - 1))))
 
     def length(self) -> Integer:
         r"""
@@ -2078,7 +2080,7 @@ class Permutation(CombinatorialElement):
         """
         w = list(range(len(self)))
         for i, j in enumerate(self, start=1):
-            w[j - 1] = i
+            w[j - 1] = Integer(i)
         return Permutations()(w)
 
     __invert__ = inverse
@@ -2379,7 +2381,7 @@ class Permutation(CombinatorialElement):
             else:
                 # We replace y by x
                 r[idx] = x
-        return len(r)
+        return Integer(len(r))
 
     def longest_increasing_subsequences(self) -> list:
         r"""
@@ -3321,7 +3323,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([1,2,3,4]).number_of_fixed_points()
             4
         """
-        return len(self.fixed_points())
+        return Integer(len(self.fixed_points()))
 
     def is_derangement(self) -> bool:
         r"""
@@ -3442,7 +3444,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([1,4,3,2]).number_of_recoils()
             2
         """
-        return len(self.recoils())
+        return Integer(len(self.recoils()))
 
     def recoils_composition(self) -> Composition:
         r"""
@@ -3615,7 +3617,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([1,4,3,2]).number_of_descents(final_descent=True)
             3
         """
-        return len(self.descents(final_descent))
+        return Integer(len(self.descents(final_descent)))
 
     def number_of_idescents(self, final_descent=False) -> int:
         r"""
@@ -3633,7 +3635,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([1,4,3,2]).number_of_idescents(final_descent=True)
             3
         """
-        return len(self.idescents(final_descent))
+        return Integer(len(self.idescents(final_descent)))
 
     @combinatorial_map(name='descent composition')
     def descents_composition(self) -> Composition:
@@ -3720,7 +3722,7 @@ class Permutation(CombinatorialElement):
             6
         """
         descents = self.descents(final_descent)
-        return sum(descents)
+        return Integer(sum(descents))
 
     def multi_major_index(self, composition):
         r"""
@@ -3789,7 +3791,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([4,3,2,1]).imajor_index()
             6
         """
-        return sum(self.idescents(final_descent))
+        return Integer(sum(self.idescents(final_descent)))
 
     def to_major_code(self, final_descent=False):
         r"""
@@ -3873,7 +3875,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([4,1,3,2,6,5]).number_of_peaks()
             2
         """
-        return len(self.peaks())
+        return Integer(len(self.peaks()))
 
     #############
     # Saliances #
@@ -3920,7 +3922,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([5,4,3,2,1]).number_of_saliances()
             5
         """
-        return len(self.saliances())
+        return Integer(len(self.saliances()))
 
     ################
     # Bruhat Order #
