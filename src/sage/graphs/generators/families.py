@@ -28,7 +28,7 @@ from math import sin, cos, pi
 from sage.graphs.graph import Graph
 
 
-def JohnsonGraph(n, k):
+def JohnsonGraph(n, k, immutable=False):
     r"""
     Return the Johnson graph with parameters `n, k`.
 
@@ -37,6 +37,15 @@ def JohnsonGraph(n, k):
     subsets of an `n`-element set; two vertices are adjacent when they meet in a
     `(k-1)`-element set. See the :wikipedia:`Johnson_graph` for more
     information.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer; number of elements of the groundset
+
+    - ``k`` -- nonnegative integer; number of elements of each subset
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -60,25 +69,19 @@ def JohnsonGraph(n, k):
         sage: g.complement().is_isomorphic(graphs.PetersenGraph())
         True
     """
-
-    g = Graph(name=f"Johnson graph with parameters {n},{k}")
     from sage.combinat.subset import Set, Subsets
 
     S = Set(range(n))
-    g.add_vertices(Subsets(S, k))
+    edges = ((sub + Set([i]), sub + Set([j]))
+             for sub in Subsets(S, k - 1)
+             for i, j in combinations(S - sub, 2))
 
-    for sub in Subsets(S, k-1):
-        elem_left = S - sub
-        for i in elem_left:
-            for j in elem_left:
-                if j <= i:
-                    continue
-                g.add_edge(sub + Set([i]), sub + Set([j]))
-
-    return g
+    return Graph([Subsets(S, k), edges], format="vertices_and_edges",
+                 name=f"Johnson graph with parameters {n},{k}",
+                 immutable=immutable)
 
 
-def KneserGraph(n, k):
+def KneserGraph(n, k, immutable=False):
     r"""
     Return the Kneser Graph with parameters `n, k`.
 
@@ -89,6 +92,15 @@ def KneserGraph(n, k):
 
     For example, the Petersen Graph can be defined
     as the Kneser Graph with parameters `5,2`.
+
+    INPUT:
+
+    - ``n`` -- positive integer; number of elements of the groundset
+
+    - ``k`` -- positive integer; number of elements of each subset
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -111,28 +123,23 @@ def KneserGraph(n, k):
         ...
         ValueError: Parameter k should be a strictly positive integer inferior to n
     """
-
     if n <= 0:
         raise ValueError("Parameter n should be a strictly positive integer")
     if k <= 0 or k > n:
         raise ValueError("Parameter k should be a strictly positive integer inferior to n")
 
-    g = Graph(name=f"Kneser graph with parameters {n},{k}")
-
     from sage.combinat.subset import Subsets
+
     S = Subsets(n, k)
-    if 2 * k > n:
-        g.add_vertices(S)
-
     s0 = S.underlying_set()    # {1,2,...,n}
-    for s in S:
-        for t in Subsets(s0.difference(s), k):
-            g.add_edge(s, t)
+    edges = ((s, t) for s in S for t in Subsets(s0.difference(s), k))
 
-    return g
+    return Graph([S, edges], format="vertices_and_edges",
+                 name=f"Kneser graph with parameters {n},{k}",
+                 immutable=immutable)
 
 
-def FurerGadget(k, prefix=None):
+def FurerGadget(k, prefix=None, immutable=False):
     r"""
     Return a Furer gadget of order ``k`` and their coloring.
 
@@ -157,6 +164,9 @@ def FurerGadget(k, prefix=None):
     - ``prefix`` -- prefix of to be appended to each vertex label,
       so as to individualise the returned Furer gadget; must be comparable for
       equality and hashable
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -206,31 +216,32 @@ def FurerGadget(k, prefix=None):
     from itertools import repeat as rep, chain
     if k <= 0:
         raise ValueError("The order of the Furer gadget must be greater than zero")
-    G = Graph()
+
     V_a = list(enumerate(rep('a', k)))
     V_b = list(enumerate(rep('b', k)))
     if prefix is not None:
         V_a = list(zip(rep(prefix, k), V_a))
         V_b = list(zip(rep(prefix, k), V_b))
-    G.add_vertices(V_a)
-    G.add_vertices(V_b)
+
     powerset = list(chain.from_iterable(combinations(range(k), r) for r in range(0, k + 1, 2)))
     if prefix is not None:
-        G.add_edges(chain.from_iterable([((prefix, s), (prefix, (i, 'a'))) for i in s] for s in powerset))
-        G.add_edges(chain.from_iterable([((prefix, s), (prefix, (i, 'b'))) for i in range(k) if i not in s] for s in powerset))
+        E_a = chain.from_iterable([((prefix, s), (prefix, (i, 'a'))) for i in s] for s in powerset)
+        E_b = chain.from_iterable([((prefix, s), (prefix, (i, 'b'))) for i in range(k) if i not in s] for s in powerset)
     else:
-        G.add_edges(chain.from_iterable([(s, (i, 'a')) for i in s] for s in powerset))
-        G.add_edges(chain.from_iterable([(s, (i, 'b')) for i in range(k) if i not in s] for s in powerset))
-    partition = []
-    for i in range(k):
-        partition.append([V_a[i], V_b[i]])
+        E_a = chain.from_iterable([(s, (i, 'a')) for i in s] for s in powerset)
+        E_b = chain.from_iterable([(s, (i, 'b')) for i in range(k) if i not in s] for s in powerset)
+
+    G = Graph([chain(V_a, V_b), chain(E_a, E_b)], format="vertices_and_edges",
+              immutable=immutable)
+
+    partition = [[V_a[i], V_b[i]] for i in range(k)]
     if prefix is not None:
         powerset = [(prefix, s) for s in powerset]
     partition.append(powerset)
     return G, partition
 
 
-def CaiFurerImmermanGraph(G, twisted=False):
+def CaiFurerImmermanGraph(G, twisted=False, immutable=None):
     r"""
     Return the a Cai-Furer-Immerman graph from `G`, possibly a twisted
     one, and a partition of its nodes.
@@ -273,6 +284,10 @@ def CaiFurerImmermanGraph(G, twisted=False):
     - ``coloring`` -- list of list of vertices, representing the
       partition induced by the coloring on ``H``
 
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the input
+      graph `G` and the returned graph will behave the same way.
+
     EXAMPLES:
 
     CaiFurerImmerman graph with no balanced vertex separator smaller
@@ -311,16 +326,30 @@ def CaiFurerImmermanGraph(G, twisted=False):
          ((3, ()), (3, (1, 'b')), None),
          ((3, (0, 1)), (3, (0, 'a')), None),
          ((3, (0, 1)), (3, (1, 'a')), None)]
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: G = graphs.CycleGraph(4, immutable=False)
+        sage: graphs.CaiFurerImmermanGraph(G)[0].is_immutable()
+        False
+        sage: graphs.CaiFurerImmermanGraph(G, immutable=True)[0].is_immutable()
+        True
+        sage: G = graphs.CycleGraph(4, immutable=True)
+        sage: graphs.CaiFurerImmermanGraph(G)[0].is_immutable()
+        True
+        sage: graphs.CaiFurerImmermanGraph(G, immutable=False)[0].is_immutable()
+        False
     """
     isConnected = G.is_connected()
     newG = Graph()
     total_partition = []
-    edge_index = {}
+    edge_index = {v: 0 for v in G}
     for v in G:
         Fk, p = FurerGadget(G.degree(v), v)
         total_partition += p
         newG = newG.union(Fk)
-        edge_index[v] = 0
     for v, u in G.edge_iterator(labels=False):
         i = edge_index[v]
         edge_index[v] += 1
@@ -331,17 +360,19 @@ def CaiFurerImmermanGraph(G, twisted=False):
         edge_ua = (u, (j, 'a'))
         edge_ub = (u, (j, 'b'))
         if isConnected and twisted:
-            temp = edge_ua
-            edge_ua = edge_ub
-            edge_ub = temp
+            edge_ua, edge_ub = edge_ub, edge_ua
             isConnected = False
         newG.add_edge(edge_va, edge_ua)
         newG.add_edge(edge_vb, edge_ub)
-    if twisted and G.is_connected():
+    if twisted and isConnected:
         s = " twisted"
     else:
         s = ""
-    newG.name("CaiFurerImmerman" + s + " graph constructed from a " + G.name())
+    newG.name(f"CaiFurerImmerman{s} graph constructed from a {G.name()}")
+    if immutable is None:
+        immutable = G.is_immutable()
+    if immutable is True:
+        newG = newG.copy(immutable=True)
     return newG, total_partition
 
 
