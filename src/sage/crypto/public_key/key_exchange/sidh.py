@@ -363,7 +363,7 @@ class SIDH(KeyExchangeBase):
             sage: 0 <= toy_sidh.bob_secret_key() <= 3^3 - 1
             True
         """
-        return Integer(random.randint(0, 3**self._e_B))
+        return Integer(random.randint(0, 3**self._e_B - 1))
 
     def alice_public_key(self, alice_secret_key: SecretKeySIDH) -> PublicKeySIDH:
         r"""
