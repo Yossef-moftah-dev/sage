@@ -2717,11 +2717,16 @@ def EllinghamHorton78Graph(immutable=False):
     return g
 
 
-def ErreraGraph():
+def ErreraGraph(immutable=False):
     r"""
     Return the Errera graph.
 
     For more information, see the :wikipedia:`Errera_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2781,7 +2786,8 @@ def ErreraGraph():
         11: [13],
         13: [15],
         14: [16]}
-    return Graph(edge_dict, name="Errera graph")
+    return Graph(edge_dict, format="dict_of_lists",
+                 name="Errera graph", immutable=immutable)
 
 
 def F26AGraph():
@@ -2813,7 +2819,7 @@ def F26AGraph():
     return g
 
 
-def FlowerSnark():
+def FlowerSnark(immutable=False):
     """
     Return a Flower Snark.
 
@@ -2825,6 +2831,11 @@ def FlowerSnark():
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the nodes are drawn 0-14 on the
     outer circle, and 15-19 in an inner pentagon.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES: Inspect a flower snark::
 
@@ -2841,7 +2852,8 @@ def FlowerSnark():
     d = {0: [1, 14, 15], 1: [2, 11], 2: [3, 7], 3: [2, 4, 16], 4: [5, 14],
          5: [6, 10], 6: [5, 7, 17], 8: [7, 9, 13], 9: [10, 18], 11: [10, 12],
          12: [13, 19], 13: [14], 15: [19], 16: [15, 17], 18: [17, 19]}
-    g = Graph(d, format='dict_of_lists', name="Flower Snark")
+    g = Graph(d, format='dict_of_lists', name="Flower Snark",
+              immutable=immutable)
     g._circle_embedding(range(15), radius=2.5, angle=pi/2)
     g._circle_embedding(range(15, 20), radius=1, angle=pi/2)
     return g
@@ -2913,11 +2925,16 @@ def FosterGraph():
     return g
 
 
-def FranklinGraph():
+def FranklinGraph(immutable=False):
     r"""
     Return the Franklin graph.
 
     For more information, see the :wikipedia:`Franklin_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2967,13 +2984,14 @@ def FranklinGraph():
         7: [10],
         8: [9, 11],
         10: [11]}
-    g = Graph(edge_dict, format='dict_of_lists', name="Franklin graph")
+    g = Graph(edge_dict, format='dict_of_lists', name="Franklin graph",
+              immutable=immutable)
     g._circle_embedding(range(6), radius=2)
     g._circle_embedding(range(6, 12), radius=1)
     return g
 
 
-def FruchtGraph():
+def FruchtGraph(immutable=False):
     """
     Return a Frucht Graph.
 
@@ -2984,6 +3002,11 @@ def FruchtGraph():
     the spring-layout algorithm. By convention, the first seven nodes are on the
     outer circle, with the next four on an inner circle and the last in the
     center.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3003,18 +3026,24 @@ def FruchtGraph():
     """
     edges = {0: [1, 6, 7], 1: [2, 7], 2: [3, 8], 3: [4, 9], 4: [5, 9],
              5: [6, 10], 6: [10], 7: [11], 8: [9, 11], 10: [11]}
-    g = Graph(edges, format='dict_of_lists', name="Frucht graph")
+    g = Graph(edges, format='dict_of_lists', name="Frucht graph",
+              immutable=immutable)
     g._circle_embedding(range(7), radius=2, angle=pi/2)
     g._circle_embedding(range(7, 11), radius=1, angle=pi/2)
     g._pos[11] = (0, 0)
     return g
 
 
-def GoldnerHararyGraph():
+def GoldnerHararyGraph(immutable=False):
     r"""
     Return the Goldner-Harary graph.
 
     For more information, see the :wikipedia:`Goldner%E2%80%93Harary_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -3075,14 +3104,20 @@ def GoldnerHararyGraph():
         9: (-0.5, -0.5),
         10: (0, 0)}
 
-    return Graph(edge_dict, pos=pos, name="Goldner-Harary graph")
+    return Graph(edge_dict, format="dict_of_lists", pos=pos,
+                 name="Goldner-Harary graph", immutable=immutable)
 
 
-def GolombGraph():
+def GolombGraph(immutable=False):
     r"""
     Return the Golomb graph.
 
     See the :wikipedia:`Golomb_graph` for more information.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -3119,7 +3154,8 @@ def GolombGraph():
         7: [- QQ('1/2'), QQ('1/2') * sqrt(3)],
         8: [QQ('1/2'), QQ('1/2') * sqrt(3)],
         9: [0, 0]}
-    return Graph(edge_dict, pos=pos_dict, name="Golomb graph")
+    return Graph(edge_dict, format="dict_of_lists", pos=pos_dict,
+                 name="Golomb graph", immutable=immutable)
 
 
 def GrayGraph(embedding=1):
@@ -3233,7 +3269,7 @@ def GrotzschGraph():
     return g
 
 
-def HeawoodGraph():
+def HeawoodGraph(immutable=False):
     """
     Return a Heawood graph.
 
@@ -3247,6 +3283,11 @@ def HeawoodGraph():
     the spring-layout algorithm. By convention, the nodes are positioned in a
     circular layout with the first node appearing at the top, and then
     continuing counterclockwise.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3267,16 +3308,22 @@ def HeawoodGraph():
     edges = {0: [1, 5, 13], 1: [2, 10], 2: [3, 7], 3: [4, 12], 4: [5, 9],
              5: [6], 6: [7, 11], 7: [8], 8: [9, 13], 9: [10], 10: [11],
              11: [12], 12: [13]}
-    g = Graph(edges, format='dict_of_lists', name="Heawood graph")
+    g = Graph(edges, format='dict_of_lists', name="Heawood graph",
+              immutable=immutable)
     g._circle_embedding(range(14), radius=1, angle=pi/2)
     return g
 
 
-def HerschelGraph():
+def HerschelGraph(immutable=False):
     r"""
     Return the Herschel graph.
 
     For more information, see the :wikipedia:`Herschel_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -3326,7 +3373,8 @@ def HerschelGraph():
         7: [8],
         8: [10],
         9: [10]}
-    g = Graph(edge_dict, format='dict_of_lists', name="Herschel graph")
+    g = Graph(edge_dict, format='dict_of_lists', name="Herschel graph",
+              immutable=immutable)
     g._circle_embedding(range(4), radius=2)
     g._circle_embedding(range(4, 10), radius=1)
     g._pos[10] = (0, 0)
