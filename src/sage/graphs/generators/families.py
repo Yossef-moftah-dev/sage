@@ -376,7 +376,7 @@ def CaiFurerImmermanGraph(G, twisted=False, immutable=None):
     return newG, total_partition
 
 
-def EgawaGraph(p, s):
+def EgawaGraph(p, s, immutable=False):
     r"""
     Return the Egawa graph with parameters `p`, `s`.
 
@@ -403,6 +403,9 @@ def EgawaGraph(p, s):
     - ``s`` -- power to which the graph named `X` in the reference
       provided above will be raised
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
+
     OUTPUT:
 
     - ``G`` -- the Egawa graph with parameters (p,s)
@@ -424,26 +427,30 @@ def EgawaGraph(p, s):
     """
     from sage.graphs.generators.basic import CompleteGraph
     from itertools import product, chain, repeat
-    g = Graph(name=f"Egawa Graph with parameters {p},{s}", multiedges=False)
     X = CompleteGraph(4)
     Y = Graph('O?Wse@UgqqT_LUebWkbT_')
-    g.add_vertices(product(*chain(repeat(Y, p), repeat(X, s))))
-    for v in g:
-        for i in range(p):
-            prefix = v[:i]
-            suffix = v[i+1:]
-            for el in Y.neighbor_iterator(v[i]):
-                u = prefix + (el,) + suffix
-                g.add_edge(v, u)
-        for i in range(p, s + p):
-            prefix = v[:i]
-            suffix = v[i+1:]
-            for el in X:
-                if el == v[i]:
-                    continue
-                u = prefix + (el,) + suffix
-                g.add_edge(v, u)
-    return g
+    vertices = list(product(*chain(repeat(Y, p), repeat(X, s))))
+
+    def edges():
+        for v in vertices:
+            for i in range(p):
+                prefix = v[:i]
+                suffix = v[i+1:]
+                for el in Y.neighbor_iterator(v[i]):
+                    u = prefix + (el,) + suffix
+                    yield (v, u)
+            for i in range(p, s + p):
+                prefix = v[:i]
+                suffix = v[i+1:]
+                for el in X:
+                    if el == v[i]:
+                        continue
+                    u = prefix + (el,) + suffix
+                    yield (v, u)
+
+    return Graph([vertices, edges()], format="vertices_and_edges",
+                 name=f"Egawa Graph with parameters {p},{s}",
+                 multiedges=False, immutable=immutable)
 
 
 def HammingGraph(n, q, X=None, immutable=False):
@@ -534,7 +541,7 @@ def HammingGraph(n, q, X=None, immutable=False):
                  multiedges=False, immutable=immutable)
 
 
-def BarbellGraph(n1, n2):
+def BarbellGraph(n1, n2, immutable=False):
     r"""
     Return a barbell graph with `2 n_1 + n_2` nodes.
 
@@ -550,6 +557,9 @@ def BarbellGraph(n1, n2):
 
     - ``n2`` -- nonnegative integer; the order of the path graph
       connecting the two complete graphs
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
 
     OUTPUT:
 
@@ -641,10 +651,12 @@ def BarbellGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(name="Barbell graph")
-    G.add_clique(list(range(n1)))
-    G.add_path(list(range(n1 - 1, n1 + n2 + 1)))
-    G.add_clique(list(range(n1 + n2, n1 + n2 + n1)))
+    from itertools import chain
+    K1 = ((i, j) for i, j in combinations(range(n1), 2))
+    P = zip(range(n1 - 1, n1 + n2), range(n1, n1 + n2 + 1))
+    K2 = ((i, j) for i, j in combinations(range(n1 + n2, 2*n1 + n2), 2))
+    G = Graph([range(2*n1 + n2), chain(K1, P, K2)], format="vertices_and_edges",
+              name="Barbell graph", immutable=immutable)
 
     G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
     G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
@@ -652,7 +664,7 @@ def BarbellGraph(n1, n2):
     return G
 
 
-def LollipopGraph(n1, n2):
+def LollipopGraph(n1, n2, immutable=False):
     r"""
     Return a lollipop graph with `n_1 + n_2` nodes.
 
@@ -664,6 +676,15 @@ def LollipopGraph(n1, n2):
     graph will be drawn in the lower-left corner with the `n_1`-th node
     at a 45 degree angle above the right horizontal center of the
     complete graph, leading directly into the path graph.
+
+    INPUT:
+
+    - ``n1`` -- integer `\geq 0`; the order of the complete graph
+
+    - ``n2`` -- integer `\geq 0`; the order of the path graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -712,11 +733,12 @@ def LollipopGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(n1 + n2, name="Lollipop graph")
-    G.add_clique(list(range(n1)))
-    G.add_path(list(range(n1, n1 + n2)))
-    if n1 * n2 > 0:
-        G.add_edge(n1 - 1, n1)
+    from itertools import chain
+    K = ((i, j) for i, j in combinations(range(n1), 2))
+    s = 1 if n1 * n2 > 0 else 0  # need edge connecting the clique and the path
+    P = zip(range(n1 - s, n1 + n2 - 1), range(n1 + 1 - s, n1 + n2))
+    G = Graph([range(n1 + n2), chain(K, P)], format="vertices_and_edges",
+              name="Lollipop graph", immutable=immutable)
     if n1 == 1:
         G.set_pos({0: (0, 0)})
     else:
@@ -725,7 +747,7 @@ def LollipopGraph(n1, n2):
     return G
 
 
-def TadpoleGraph(n1, n2):
+def TadpoleGraph(n1, n2, immutable=False):
     r"""
     Return a tadpole graph with `n_1 + n_2` nodes.
 
@@ -737,6 +759,15 @@ def TadpoleGraph(n1, n2):
     in the lower-left corner with the `n_1`-th node at a 45 degree angle above
     the right horizontal center of the cycle graph, leading directly into the
     path graph.
+
+    INPUT:
+
+    - ``n1`` -- integer `\geq 3`; the order of the cycle graph
+
+    - ``n2`` -- integer `\geq 0`; the order of the path graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -779,26 +810,35 @@ def TadpoleGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(n1 + n2, name="Tadpole graph")
-    G.add_cycle(list(range(n1)))
-    G.add_path(list(range(n1, n1 + n2)))
-    if n1 * n2 > 0:
-        G.add_edge(n1 - 1, n1)
+    from itertools import chain
+    C = ((i, i + 1) for i in range(n1 - 1))
+    e = ((0, n1 - 1),)
+    s = 1 if n2 else 0  # need edge connecting the cycle and the path
+    P = ((i, i + 1) for i in range(n1 - s, n1 + n2 - 1))
+    G = Graph([range(n1 + n2), chain(C, e, P)], format="vertices_and_edges",
+              name="Tadpole graph", immutable=immutable)
     G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
     G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
     return G
 
 
-def AztecDiamondGraph(n):
-    """
+def AztecDiamondGraph(n, immutable=False):
+    r"""
     Return the Aztec Diamond graph of order ``n``.
 
     See the :wikipedia:`Aztec_diamond` for more information.
 
+    INPUT:
+
+    - ``n`` -- integer `\geq 0`; the order Aztec Diamond graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: graphs.AztecDiamondGraph(2)
-        Aztec Diamond graph of order 2
+        Aztec Diamond graph of order 2: Graph on 12 vertices
 
         sage: [graphs.AztecDiamondGraph(i).n_vertices() for i in range(8)]
         [0, 4, 12, 24, 40, 60, 84, 112]
@@ -809,26 +849,42 @@ def AztecDiamondGraph(n):
         sage: G = graphs.AztecDiamondGraph(3)
         sage: sum(1 for p in G.perfect_matchings())
         64
+
+    TESTS::
+
+        sage: n = randint(0, 3)
+        sage: graphs.AztecDiamondGraph(n).is_immutable()
+        False
+        sage: graphs.AztecDiamondGraph(n, immutable=True).is_immutable()
+        True
     """
     from sage.graphs.generators.basic import Grid2dGraph
     if n:
         N = 2 * n
-        G = Grid2dGraph(N, N)
+        G = Grid2dGraph(N, N, immutable=immutable)
         H = G.subgraph([(i, j) for i in range(N) for j in range(N)
                         if i - n <= j <= n + i and
                         n - 1 - i <= j <= 3 * n - i - 1])
     else:
-        H = Graph()
-    H.rename('Aztec Diamond graph of order {}'.format(n))
+        H = Graph(immutable=immutable)
+    H._name = f"Aztec Diamond graph of order {n}"
     return H
 
 
-def DipoleGraph(n):
+def DipoleGraph(n, immutable=False):
     r"""
     Return a dipole graph with `n` edges.
 
     A dipole graph is a multigraph consisting of 2 vertices connected with `n`
     parallel edges.
+
+    INPUT:
+
+    - ``n`` -- integer `\geq 0`; the number of parallel edges connecting the 2
+      vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -857,15 +913,23 @@ def DipoleGraph(n):
         Traceback (most recent call last):
         ...
         ValueError: invalid graph description, n should be >= 0
+
+    Check the behavioir of parameter immutable::
+
+        sage: graphs.DipoleGraph(2, immutable=False).is_immutable()
+        False
+        sage: graphs.DipoleGraph(2, immutable=True).is_immutable()
+        True
     """
     # sanity checks
     if n < 0:
         raise ValueError("invalid graph description, n should be >= 0")
 
-    return Graph([[0, 1], [(0, 1)]*n], name="Dipole graph", multiedges=True)
+    return Graph([[0, 1], [(0, 1)]*n], name="Dipole graph",
+                 multiedges=True, immutable=immutable)
 
 
-def BubbleSortGraph(n):
+def BubbleSortGraph(n, immutable=False):
     r"""
     Return the bubble sort graph `B(n)`.
 
@@ -884,6 +948,9 @@ def BubbleSortGraph(n):
     INPUT:
 
     - ``n`` -- positive integer. The number of symbols to permute
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -936,7 +1003,7 @@ def BubbleSortGraph(n):
             "Invalid number of symbols to permute, n should be >= 1")
     if n == 1:
         from sage.graphs.generators.basic import CompleteGraph
-        return Graph(CompleteGraph(n), name="Bubble sort")
+        return Graph(CompleteGraph(n), name="Bubble sort", immutable=immutable)
     from sage.combinat.permutation import Permutations
     # create set from which to permute
     label_set = [str(i) for i in range(1, n + 1)]
@@ -944,22 +1011,23 @@ def BubbleSortGraph(n):
     # iterate through all vertices
     for v in Permutations(label_set):
         v = list(v)  # So we can easily mutate it
-        tmp_dict = {}
+        neighbors = []
         # add all adjacencies
         for i in range(n - 1):
             # swap entries
             v[i], v[i + 1] = v[i + 1], v[i]
             # add new vertex
             new_vert = ''.join(v)
-            tmp_dict[new_vert] = None
+            neighbors.append(new_vert)
             # swap back
             v[i], v[i + 1] = v[i + 1], v[i]
         # add adjacency dict
-        d[''.join(v)] = tmp_dict
-    return Graph(d, name="Bubble sort")
+        d[''.join(v)] = neighbors
+    return Graph(d, format="dict_of_lists", name="Bubble sort",
+                 immutable=immutable)
 
 
-def chang_graphs():
+def chang_graphs(immutable=False):
     r"""
     Return the three Chang graphs.
 
@@ -967,6 +1035,11 @@ def chang_graphs():
     called the Chang graphs. The fourth is the line graph of `K_8`. For more
     information about the Chang graphs, see the :wikipedia:`Chang_graphs` or
     https://www.win.tue.nl/~aeb/graphs/Chang.html.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return
+      immutable or mutable graphs
 
     EXAMPLES: check that we get 4 non-isomorphic s.r.g.'s with the
     same parameters::
@@ -997,11 +1070,11 @@ def chang_graphs():
         [True, True, True]
     """
     g1 = Graph("[}~~EebhkrRb_~SoLOIiAZ?LBBxDb?bQcggjHKEwoZFAaiZ?Yf[?dxb@@tdWGkwn",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     g2 = Graph("[~z^UipkkZPr_~Y_LOIiATOLBBxPR@`acoojBBSoWXTaabN?Yts?Yji_QyioClXZ",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     g3 = Graph(r"[~~vVMWdKFpV`^UGIaIERQ`\DBxpA@g`CbGRI`AxICNaFM[?fM\?Ytj@CxrGGlYt",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     return [g1, g2, g3]
 
 
