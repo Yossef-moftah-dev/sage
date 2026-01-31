@@ -3725,11 +3725,16 @@ def HoffmanGraph(immutable=False):
     return g
 
 
-def HoltGraph():
+def HoltGraph(immutable=False):
     r"""
     Return the Holt graph (also called the Doyle graph).
 
     See the :wikipedia:`Holt_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3752,14 +3757,16 @@ def HoltGraph():
         sage: g.automorphism_group().cardinality()                                      # needs sage.groups
         54
     """
-    g = Graph(loops=False, name="Holt graph", pos={})
-    for x in range(9):
-        for y in range(3):
-            g.add_edge((x, y), ((4 * x + 1) % 9, (y - 1) % 3))
-            g.add_edge((x, y), ((4 * x - 1) % 9, (y - 1) % 3))
-            g.add_edge((x, y), ((7 * x + 7) % 9, (y + 1) % 3))
-            g.add_edge((x, y), ((7 * x - 7) % 9, (y + 1) % 3))
+    def edges():
+        for x in range(9):
+            for y in range(3):
+                yield ((x, y), ((4 * x + 1) % 9, (y - 1) % 3))
+                yield ((x, y), ((4 * x - 1) % 9, (y - 1) % 3))
+                yield ((x, y), ((7 * x + 7) % 9, (y + 1) % 3))
+                yield ((x, y), ((7 * x - 7) % 9, (y + 1) % 3))
 
+    g = Graph(edges(), format="list_of_edges", loops=False,
+              name="Holt graph", immutable=immutable)
     for j in range(0, 6, 2):
         g._line_embedding([(x, j / 2) for x in range(9)],
                           first=(cos(2 * j * pi / 6), sin(2 * j * pi / 6)),
@@ -3768,7 +3775,7 @@ def HoltGraph():
     return g
 
 
-def KrackhardtKiteGraph():
+def KrackhardtKiteGraph(immutable=False):
     """
     Return a Krackhardt kite graph with 10 nodes.
 
@@ -3792,6 +3799,11 @@ def KrackhardtKiteGraph():
     other nodes in the graph (i.e.: Closeness Centrality).  Please execute the
     example for visualization.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     Construct and show a Krackhardt kite graph ::
@@ -3810,10 +3822,11 @@ def KrackhardtKiteGraph():
              4: [6], 5: [6, 7], 6: [7], 7: [8], 8: [9]}
     pos_dict = {0: (-1, 4), 1: (1, 4), 2: (-2, 3), 3: (0, 3), 4: (2, 3),
                 5: (-1, 2), 6: (1, 2), 7: (0, 1), 8: (0, 0), 9: (0, -1)}
-    return Graph(edges, pos=pos_dict, name="Krackhardt Kite Graph")
+    return Graph(edges, format="dict_of_lists", pos=pos_dict,
+                 name="Krackhardt Kite Graph", immutable=immutable)
 
 
-def Klein3RegularGraph():
+def Klein3RegularGraph(immutable=False):
     r"""
     Return the Klein 3-regular graph.
 
@@ -3821,6 +3834,11 @@ def Klein3RegularGraph():
     surface of genus 3. It is the dual of
     :meth:`~sage.graphs.graph_generators.GraphGenerators.Klein7RegularGraph`.
     For more information, see the :wikipedia:`Klein_graphs`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3837,16 +3855,16 @@ def Klein3RegularGraph():
     """
     g3 = Graph(':w`_GKWDBap`CMWFCpWsQUNdBwwuXPHrg`U`RIqypehVLqgHupYcFJyAv^Prk]'
                'EcarHwIVHAKh|\\tLVUxT]`ZDTJ{Af[o_AuKs{r_?ef',
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable,
+               name="Klein 3-regular Graph")
     g3._circle_embedding([0, 2, 3, 4, 6, 8, 14, 1, 37, 30, 34, 48, 55, 43, 40,
                           45, 18, 20, 47, 42, 23, 17, 16, 10, 41, 11, 49, 25,
                           51, 26, 54, 9, 22, 15, 21, 12, 24, 7, 52, 31, 32, 36,
                           46, 35, 29, 50, 27, 19, 28, 5, 33, 13, 53, 39, 38, 44])
-    g3.name("Klein 3-regular Graph")
     return g3
 
 
-def Klein7RegularGraph():
+def Klein7RegularGraph(immutable=False):
     r"""
     Return the Klein 7-regular graph.
 
@@ -3854,6 +3872,11 @@ def Klein7RegularGraph():
     genus 3. It is the dual of
     :meth:`~sage.graphs.graph_generators.GraphGenerators.Klein3RegularGraph`.
     For more information, see the :wikipedia:`Klein_graphs`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3869,14 +3892,14 @@ def Klein7RegularGraph():
         4
     """
     g7 = Graph(':W__@`AaBbC_CDbDcE`F_AG_@DEH_IgHIJbFGIKaFHILeFGHMdFKN_EKOPaCNP'
-               'Q`HOQRcGLRS`BKMSTdJKLPTU', loops=False, multiedges=False)
+               'Q`HOQRcGLRS`BKMSTdJKLPTU', loops=False, multiedges=False,
+               name="Klein 7-regular Graph", immutable=immutable)
     g7._circle_embedding([0, 2, 3, 1, 9, 16, 20, 21, 4, 19, 17, 7, 15,
                           10, 8, 13, 11, 5, 23, 22, 14, 12, 18, 6])
-    g7.name("Klein 7-regular Graph")
     return g7
 
 
-def LocalMcLaughlinGraph():
+def LocalMcLaughlinGraph(immutable=False):
     r"""
     Return the local McLaughlin graph.
 
@@ -3885,6 +3908,11 @@ def LocalMcLaughlinGraph():
     :meth:`~sage.graphs.graph_generators.GraphGenerators.McLaughlinGraph` by
     considering the stabilizer of a point: one of its orbits has cardinality
     162.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3897,8 +3925,10 @@ def LocalMcLaughlinGraph():
     orbits = g.automorphism_group().stabilizer(1).orbits()
     orbit = [x for x in orbits if len(x) == 162][0]
     g = g.subgraph(vertices=orbit)
-    g.relabel()
     g.name("Local McLaughlin Graph")
+    if immutable:
+        return g.relabel(inplace=False, immutable=True)
+    g.relabel()
     return g
 
 
