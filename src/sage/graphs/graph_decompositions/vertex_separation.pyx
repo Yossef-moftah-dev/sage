@@ -1933,10 +1933,11 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
     # The set S of vertices of a prefix P is in prefix_storage if the branch
     # with prefix P is such that c(P)<\min_{L\in{\cal L}_P(V)} c(L). In such
     # case, there is no need to continue exploration for the current branch.
-    cdef frozenset frozen_prefix
+    cdef tuple frozen_prefix
 
     if loc_level <= max_prefix_length:
-        frozen_prefix = frozenset(prefix[i] for i in range(loc_level))
+        frozen_prefix = tuple(loc_b_prefix.bits[i]
+                              for i in range(loc_b_prefix.limbs))
         if frozen_prefix in prefix_storage:
             return upper_bound
 
