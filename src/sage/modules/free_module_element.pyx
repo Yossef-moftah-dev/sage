@@ -4970,7 +4970,6 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         Test that :issue:`17101` is fixed::
 
-            sage: # needs sage.rings.real_interval_field
             sage: v = vector([RIF(-1, 1)], sparse=True)
             sage: v.is_zero()
             False
