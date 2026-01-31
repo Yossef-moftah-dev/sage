@@ -4373,7 +4373,7 @@ def MoserSpindle(immutable=False):
                  name="Moser spindle", immutable=immutable)
 
 
-def MurtyGraph():
+def MurtyGraph(immutable=False):
     r"""
     Return the Murty graph.
 
@@ -4399,6 +4399,11 @@ def MurtyGraph():
     (noncubic) vertices on the top row, the second three vertices (that form a
     stable set) in the middle row, and the remaining three vertices (that form
     a triangle) at the bottom.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -4444,15 +4449,10 @@ def MurtyGraph():
         7: (0.5, -1 - sqrt(3)/2)
     }
 
-    G = Graph(8, pos=pos_dict, name="Murty Graph")
-
-    G.add_edge(0, 1)
-    for v in range(2, 5):
-        G.add_edges([(0, v), (1, v), (v, v+3)])
-
-    G.add_edges([(5, 6), (5, 7), (6, 7)])
-
-    return G
+    edges = ((0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4),
+             (2, 5), (3, 6), (4, 7), (5, 6), (5, 7), (6, 7))
+    return Graph([range(8), edges], format="vertices_and_edges", pos=pos_dict,
+                 name="Murty Graph", immutable=immutable)
 
 
 def NauruGraph(embedding=2):
@@ -4504,11 +4504,16 @@ def NauruGraph(embedding=2):
         raise ValueError("the value of embedding must be 1 or 2")
 
 
-def PappusGraph():
+def PappusGraph(immutable=False):
     """
     Return the Pappus graph, a graph on 18 vertices.
 
     The Pappus graph is cubic, symmetric, and distance-regular.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4522,19 +4527,25 @@ def PappusGraph():
     edges = {0: [1, 5, 6], 1: [2, 7], 2: [3, 8], 3: [4, 9], 4: [5, 10], 5: [11],
              6: [13, 17], 7: [12, 14], 8: [13, 15], 9: [14, 16], 10: [15, 17],
              11: [12, 16], 12: [15], 13: [16], 14: [17]}
-    g = Graph(edges, format='dict_of_lists', name="Pappus Graph")
+    g = Graph(edges, format='dict_of_lists', name="Pappus Graph",
+              immutable=immutable)
     g._circle_embedding(range(6), radius=3, angle=pi/2)
     g._circle_embedding(range(6, 12), radius=2, angle=pi/2)
     g._circle_embedding(range(12, 18), radius=1, angle=pi/2)
     return g
 
 
-def PoussinGraph():
+def PoussinGraph(immutable=False):
     r"""
     Return the Poussin Graph.
 
     For more information on the Poussin Graph, see its corresponding `Wolfram
     page <http://mathworld.wolfram.com/PoussinGraph.html>`_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4557,7 +4568,7 @@ def PoussinGraph():
     g._circle_embedding(list(range(9, 14)), radius=.2, shift=.4)
     g._pos[14] = (0,0)
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
 def PetersenGraph():
@@ -4590,7 +4601,7 @@ def PetersenGraph():
     return P
 
 
-def PerkelGraph():
+def PerkelGraph(immutable=False):
     r"""
     Return the Perkel Graph.
 
@@ -4598,6 +4609,11 @@ def PerkelGraph():
     is the unique distance-regular graph with intersection array
     `(6,5,2;1,1,3)`. For more information, see the :wikipedia:`Perkel_graph` or
     https://www.win.tue.nl/~aeb/graphs/Perkel.html.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4611,7 +4627,10 @@ def PerkelGraph():
         g.add_edges(((0, i), (1, (i + j) % 19)) for j in [2, 5, 7])
         g.add_edges(((0, i), (2, (i + j) % 19)) for j in [5, -4, -8])
         g.add_edges(((1, i), (2, (i + j) % 19)) for j in [7, -4, -5])
-    g.relabel()
+    if immutable:
+        g = g.relabel(inplace=False, immutable=True)
+    else:
+        g.relabel()
     g._circle_embedding([0, 2, 3, 35, 8, 33, 45, 5, 53, 51, 18, 50, 29, 46, 30,
                          48, 40, 17, 20, 27, 43, 16, 7, 14, 6, 4, 15, 41, 24, 37,
                          28, 9, 55, 38, 19, 34, 39, 36, 54, 52, 44, 23, 12, 22,
@@ -4654,7 +4673,7 @@ def RobertsonGraph():
     return g
 
 
-def SchlaefliGraph():
+def SchlaefliGraph(immutable=False):
     r"""
     Return the Schläfli graph.
 
@@ -4671,6 +4690,11 @@ def SchlaefliGraph():
     .. TODO::
 
         Find a beautiful layout for this beautiful graph.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -4692,16 +4716,15 @@ def SchlaefliGraph():
         sage: graphs.ClebschGraph().complement().is_isomorphic(neighborhood)
         True
     """
-    from sage.graphs.graph import Graph
-    G = Graph('ZBXzr|}^z~TTitjLth|dmkrmsl|if}TmbJMhrJX]YfFyTbmsseztKTvyhDvw')
+    G = Graph('ZBXzr|}^z~TTitjLth|dmkrmsl|if}TmbJMhrJX]YfFyTbmsseztKTvyhDvw',
+              name="Schläfli graph", immutable=immutable)
     order = [1, 8, 5, 10, 2, 6, 11, 15, 17, 13, 18, 12, 9, 24, 25, 3, 26, 7,
              16, 20, 23, 0, 21, 14, 22, 4, 19]
     G._circle_embedding(order)
-    G.name("Schläfli graph")
     return G
 
 
-def ShrikhandeGraph():
+def ShrikhandeGraph(immutable=False):
     """
     Return the Shrikhande graph.
 
@@ -4713,6 +4736,11 @@ def ShrikhandeGraph():
 
         :meth:`Graph.is_strongly_regular` -- tests whether a graph is strongly
         regular and/or returns its parameters.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -4792,7 +4820,8 @@ def ShrikhandeGraph():
         0O17: [0O11, 0O12, 0O14, 0O15,   0O06, 0O00]
     }
 
-    return Graph(edge_dict, pos=pos_dict, name="Shrikhande graph")
+    return Graph(edge_dict, format="dict_of_lists", pos=pos_dict,
+                 name="Shrikhande graph", immutable=immutable)
 
 
 def SylvesterGraph():
