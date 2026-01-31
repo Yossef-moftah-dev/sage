@@ -5560,12 +5560,17 @@ def WagnerGraph():
     return g
 
 
-def WatkinsSnarkGraph():
+def WatkinsSnarkGraph(immutable=False):
     r"""
     Return the Watkins Snark Graph.
 
     The Watkins Graph is a snark with 50 vertices and 75 edges. For more
     information, see the :wikipedia:`Watkins_snark`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -5595,10 +5600,10 @@ def WatkinsSnarkGraph():
         g.add_edge((i, 6), (i, 2))
 
     g._circle_embedding(list(range(5)), shift=.25, radius=1.1)
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
-def WienerArayaGraph():
+def WienerArayaGraph(immutable=False):
     r"""
     Return the Wiener-Araya Graph.
 
@@ -5606,6 +5611,11 @@ def WienerArayaGraph():
     67 edges. For more information, see the `Wolfram Page on the Wiener-Araya
     Graph <http://mathworld.wolfram.com/Wiener-ArayaGraph.html>`_ or
     :wikipedia:`Wiener-Araya_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -5654,6 +5664,8 @@ def WienerArayaGraph():
     g.add_edge((3, 4), (2, 14))
     g.add_edge((3, 1), (3, 4))
 
+    if immutable:
+        return g.relabel(inplace=False, immutable=True)
     g.relabel()
     return g
 
@@ -5733,7 +5745,7 @@ def MathonStronglyRegularGraph(t):
     return MathonPseudocyclicMergingGraph(ES, t)
 
 
-def JankoKharaghaniGraph(v):
+def JankoKharaghaniGraph(v, immutable=False):
     r"""
     Return a `(936, 375, 150, 150)`-srg or a `(1800, 1029, 588, 588)`-srg.
 
@@ -5744,6 +5756,9 @@ def JankoKharaghaniGraph(v):
     INPUT:
 
     - ``v`` -- integer; one of 936 or 1800
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -5825,17 +5840,22 @@ def JankoKharaghaniGraph(v):
         D = (D + matrix.block(D2))/2
 
     return Graph([e for e, v in D.dict().items() if v == 1],
-                 multiedges=False,
-                 name='Janko-Kharaghani')
+                 format="list_of_edges", multiedges=False,
+                 name='Janko-Kharaghani', immutable=immutable)
 
 
-def JankoKharaghaniTonchevGraph():
+def JankoKharaghaniTonchevGraph(immutable=False):
     r"""
     Return a `(324,153,72,72)`-strongly regular graph from [JKT2001]_.
 
     Build the graph using the description given in [JKT2001]_, taking sets B1
     and B163 in the text as adjacencies of vertices 1 and 163, respectively, and
     taking the edge orbits of the group `G` provided.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -5900,11 +5920,13 @@ def JankoKharaghaniTonchevGraph():
         for x in st.OrbitsDomain(b):
             Gamma.add_edges(map(tuple, G.Orbit(libgap.Set([i, x[0]]),
                                                libgap.OnSets)))
+    if immutable:
+        return Gamma.relabel(range(Gamma.order()), inplace=False, immutable=True)
     Gamma.relabel(range(Gamma.order()))
     return Gamma
 
 
-def IoninKharaghani765Graph():
+def IoninKharaghani765Graph(immutable=False):
     r"""
     Return a `(765, 192, 48, 48)`-strongly regular graph.
 
@@ -5990,6 +6012,11 @@ def IoninKharaghani765Graph():
         therefore `S` is an adjacency matrix of a strongly regular graph with
         parameters `(765, 192, 48, 48)`.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: g = graphs.IoninKharaghani765Graph(); g                                   # needs sage.modules sage.rings.finite_rings
@@ -6073,11 +6100,10 @@ def IoninKharaghani765Graph():
         int_to_matrix[i + 1] = N(vec)
 
     M2 = matrix.block([[int_to_matrix[x] for x in R] for R in W.rows()])
-    g = Graph(M2, name='Ionin-Kharaghani')
-    return g
+    return Graph(M2, name='Ionin-Kharaghani', immutable=immutable)
 
 
-def U42Graph216():
+def U42Graph216(immutable=False):
     r"""
     Return a (216,40,4,8)-strongly regular graph from [CRS2016]_.
 
@@ -6085,6 +6111,11 @@ def U42Graph216():
     as the one on the hyperbolic lines of the corresponding unitary polar space,
     and then doing the unique merging of the orbitals leading to a graph with
     the parameters in question.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -6116,13 +6147,12 @@ def U42Graph216():
                 end;""")
 
     adj = adj_list()  # for each vertex, we get the list of vertices it is adjacent to
-    G = Graph(((i, int(j - 1)) for i, ni in enumerate(adj) for j in ni),
-              format='list_of_edges', multiedges=False)
-    G.name('U42Graph216')
-    return G
+    return Graph(((i, int(j - 1)) for i, ni in enumerate(adj) for j in ni),
+                 format='list_of_edges', multiedges=False,
+                 name='U42Graph216', immutable=immutable)
 
 
-def U42Graph540():
+def U42Graph540(immutable=False):
     r"""
     Return a (540,187,58,68)-strongly regular graph from [CRS2016]_.
 
@@ -6132,6 +6162,11 @@ def U42Graph540():
     projective space over `GF(9)`. There are several possible mergings of
     orbitals, some leading to non-isomorphic graphs with the same parameters. We
     found the merging here using [FK1991]_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -6158,7 +6193,6 @@ def U42Graph540():
                 end;""")
 
     adj = adj_list()  # for each vertex, we get the list of vertices it is adjacent to
-    G = Graph(((i, int(j - 1)) for i, ni in enumerate(adj) for j in ni),
-              format='list_of_edges', multiedges=False)
-    G.name('U42Graph540')
-    return G
+    return Graph(((i, int(j - 1)) for i, ni in enumerate(adj) for j in ni),
+                 format='list_of_edges', multiedges=False,
+                 name='U42Graph540', immutable=immutable)
