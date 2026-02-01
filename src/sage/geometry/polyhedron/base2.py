@@ -520,10 +520,7 @@ class Polyhedron_base2(Polyhedron_base1):
         points = set()
         for simplex in triangulation:
             triang_vertices = [self.Vrepresentation(i) for i in simplex]
-            new_points = simplex_points(triang_vertices)
-            for p in new_points:
-                p.set_immutable()
-            points.update(new_points)
+            points.update(simplex_points(triang_vertices))
         # assert all(self.contains(p) for p in points)   # slow
         return tuple(points)
 
