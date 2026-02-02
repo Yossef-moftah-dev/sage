@@ -622,9 +622,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         if self.is_supersingular():
             n = n.prime_to_m_part(F.characteristic()) # p-torsion is trivial
             if n.is_one():
-                return F
-
-            if n == 2:
+                ext = 1
+            elif n == 2:
                 ext = 3 if self.two_torsion_rank() == 0 else 2 if self.two_torsion_rank() == 1 else 1
             else:
                 from sage.rings.finite_rings.integer_mod import Mod
