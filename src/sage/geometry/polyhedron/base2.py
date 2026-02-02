@@ -189,8 +189,8 @@ class Polyhedron_base2(Polyhedron_base1):
             from sage.arith.misc import integer_floor as floor
             vertices = []
             for v in self.vertex_generator():
-                vbox = [ set([floor(x), ceil(x)]) for x in v ]
-                vertices.extend( itertools.product(*vbox) )
+                vbox = [set([floor(x), ceil(x)]) for x in v]
+                vertices.extend(itertools.product(*vbox))
 
         # construct the (enveloping) lattice polytope
         from sage.geometry.lattice_polytope import LatticePolytope
@@ -487,6 +487,14 @@ class Polyhedron_base2(Polyhedron_base1):
             Traceback (most recent call last):
             ...
             ValueError: can only enumerate points in a compact polyhedron
+
+        Test for immutability in :issue:`41571`::
+
+            sage: V = ZZ^6
+            sage: e = V.basis()
+            sage: vertices =[V.zero()] + [6*e[i] for i in range(6)]
+            sage: P = Polyhedron(vertices, base_ring=ZZ)
+            sage: S = set(P.integral_points())
         """
         from sage.misc.misc_c import prod
         if not self.is_compact():
