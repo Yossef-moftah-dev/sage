@@ -129,7 +129,7 @@ jobs:
           large-packages: true
           docker-images: true
           swap-storage: true
-          continue-on-error: true
+        continue-on-error: true
         if: inputs.free_disk_space
       - name: Check out SageMath
         uses: actions/checkout@v4
