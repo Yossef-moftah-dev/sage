@@ -25,7 +25,6 @@ on:
            "fedora-40",
            "fedora-41",
            "centos-stream-9",
-           "centos-stream-9-python3.12",
            "opensuse-tumbleweed",
           ]
         # 'tox -e update_docker_platforms' updates above
