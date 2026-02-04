@@ -2458,7 +2458,7 @@ def MycielskiStep(g):
     return gg
 
 
-def NKStarGraph(n, k):
+def NKStarGraph(n, k, immutable=False):
     r"""
     Return the `(n,k)`-star graph.
 
@@ -2475,6 +2475,9 @@ def NKStarGraph(n, k):
     -  ``n`` -- integer; number of symbols
 
     -  ``k`` -- integer; length of the labels of the vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2497,14 +2500,14 @@ def NKStarGraph(n, k):
     d = {}
     for v in Arrangements(set, k):
         v = list(v)  # So we can easily mutate it
-        tmp_dict = {}
+        neighbors = []
         # add edges of dimension i
         for i in range(1, k):
             # swap 0th and ith element
             v[0], v[i] = v[i], v[0]
             # convert to str and add to list
             vert = "".join(v)
-            tmp_dict[vert] = None
+            neighbors.append(vert)
             # swap back
             v[0], v[i] = v[i], v[0]
         # add other edges
@@ -2515,10 +2518,11 @@ def NKStarGraph(n, k):
                 v[0] = i
                 # add edge
                 vert = "".join(v)
-                tmp_dict[vert] = None
+                neighbors.append(vert)
             v[0] = tmp_bit
-        d["".join(v)] = tmp_dict
-    return Graph(d, name=f"({n},{k})-star")
+        d["".join(v)] = neighbors
+    return Graph(d, format="dict_of_lists", name=f"({n},{k})-star",
+                 immutable=immutable)
 
 
 def NStarGraph(n):
