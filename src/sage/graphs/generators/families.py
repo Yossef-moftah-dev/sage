@@ -81,7 +81,7 @@ def JohnsonGraph(n, k, immutable=False):
                  immutable=immutable)
 
 
-def KneserGraph(n, k, immutable=False):
+def KneserGraph(n, k, immutable=False, name=None):
     r"""
     Return the Kneser Graph with parameters `n, k`.
 
@@ -101,6 +101,9 @@ def KneserGraph(n, k, immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     EXAMPLES::
 
@@ -127,6 +130,8 @@ def KneserGraph(n, k, immutable=False):
         raise ValueError("Parameter n should be a strictly positive integer")
     if k <= 0 or k > n:
         raise ValueError("Parameter k should be a strictly positive integer inferior to n")
+    if name is None:
+        name = f"Kneser graph with parameters {n},{k}"
 
     from sage.combinat.subset import Subsets
 
@@ -135,8 +140,7 @@ def KneserGraph(n, k, immutable=False):
     edges = ((s, t) for s in S for t in Subsets(s0.difference(s), k))
 
     return Graph([S, edges], format="vertices_and_edges",
-                 name=f"Kneser graph with parameters {n},{k}",
-                 immutable=immutable)
+                 name=name, immutable=immutable)
 
 
 def FurerGadget(k, prefix=None, immutable=False):
@@ -2577,7 +2581,7 @@ def NStarGraph(n, immutable=False):
                  immutable=immutable)
 
 
-def OddGraph(n):
+def OddGraph(n, immutable=False):
     r"""
     Return the Odd Graph with parameter `n`.
 
@@ -2590,6 +2594,13 @@ def OddGraph(n):
 
     For example, the Petersen Graph can be defined
     as the Odd Graph with parameter `3`.
+
+    INPUT:
+
+    -  ``n`` -- integer; the grounset has `2n - 1` elements
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2610,9 +2621,8 @@ def OddGraph(n):
     """
     if n <= 1:
         raise ValueError("Parameter n should be an integer strictly greater than 1")
-    g = KneserGraph(2*n - 1, n - 1)
-    g.name("Odd Graph with parameter %s" % n)
-    return g
+    return KneserGraph(2*n - 1, n - 1, immutable=immutable,
+                       name=f"Odd Graph with parameter {n}")
 
 
 def PaleyGraph(q):
