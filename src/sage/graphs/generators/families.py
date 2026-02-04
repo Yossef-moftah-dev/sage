@@ -2204,7 +2204,7 @@ def HararyGraph(k, n, immutable=False):
     return G.copy(immutable=True) if immutable else G
 
 
-def HyperStarGraph(n, k):
+def HyperStarGraph(n, k, immutable=False):
     r"""
     Return the hyper-star graph `HS(n, k)`.
 
@@ -2220,6 +2220,9 @@ def HyperStarGraph(n, k):
     - ``n`` -- nonnegative integer; length of the binary strings
 
     - ``k`` -- nonnegative integer; number of 1s per binary string
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2274,7 +2277,8 @@ def HyperStarGraph(n, k):
                 c[i] = one
             adj[u] = L
 
-    return Graph(adj, format='dict_of_lists', name=f"HS({n},{k})")
+    return Graph(adj, format='dict_of_lists', name=f"HS({n},{k})",
+                 immutable=immutable)
 
 
 def LCFGraph(n, shift_list, repeats):
