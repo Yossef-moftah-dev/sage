@@ -1078,7 +1078,7 @@ def chang_graphs(immutable=False):
     return [g1, g2, g3]
 
 
-def CirculantGraph(n, adjacency, immutable=False):
+def CirculantGraph(n, adjacency, immutable=False, name=None):
     r"""
     Return a circulant graph with `n` nodes.
 
@@ -1093,6 +1093,9 @@ def CirculantGraph(n, adjacency, immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, each circulant
@@ -1178,11 +1181,12 @@ def CirculantGraph(n, adjacency, immutable=False):
     """
     if not isinstance(adjacency, list):
         adjacency = [adjacency]
+    if name is None:
+        name = f"Circulant graph ({adjacency})"
 
     edges = ((v, (v + j) % n) for v in range(n) for j in adjacency)
     G = Graph([range(n), edges], format="vertices_and_edges",
-              name=f"Circulant graph ({adjacency})",
-              immutable=immutable)
+              name=name, immutable=immutable)
     G._circle_embedding(list(range(n)))
     return G
 
@@ -2133,7 +2137,7 @@ def TabacjnGraph(n, a, b, r, immutable=False):
     return G
 
 
-def HararyGraph(k, n):
+def HararyGraph(k, n, immutable=False):
     r"""
     Return the Harary graph on `n` vertices and connectivity `k`, where
     `2 \leq k < n`.
@@ -2146,6 +2150,15 @@ def HararyGraph(k, n):
     The construction provided uses the method CirculantGraph.  For more
     details, see the book [West2001]_ or the `MathWorld article on
     Harary graphs <http://mathworld.wolfram.com/HararyGraph.html>`_.
+
+    INPUT:
+
+    - ``k`` -- integer; connectivity of the graph
+
+    - ``n`` -- integer; number of vertices of the graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2175,19 +2188,20 @@ def HararyGraph(k, n):
     if k >= n:
         raise ValueError("Number of vertices n should be greater than k.")
 
-    if k % 2 == 0:
-        G = CirculantGraph(n, list(range(1, k//2 + 1)))
-    else:
-        if n % 2 == 0:
-            G = CirculantGraph(n, list(range(1, (k - 1)//2 + 1)))
-            for i in range(n):
-                G.add_edge(i, (i + n//2) % n)
-        else:
-            G = HararyGraph(k - 1, n)
-            for i in range((n - 1)//2 + 1):
-                G.add_edge(i, (i + (n - 1)//2) % n)
-    G.name('Harary graph {0}, {1}'.format(k, n))
-    return G
+    name = f"Harary graph {k}, {n}"
+    if not k % 2:
+        return CirculantGraph(n, list(range(1, k//2 + 1)),
+                              immutable=immutable, name=name)
+    if not n % 2:
+        shift_list = list(range(1, (k - 1)//2 + 1))
+        shift_list.append(n//2)
+        return CirculantGraph(n, shift_list,
+                              immutable=immutable, name=name)
+    G = CirculantGraph(n, list(range(1, (k - 1)//2 + 1)),
+                       immutable=False, name=name)
+    for i in range((n - 1)//2 + 1):
+        G.add_edge(i, (i + (n - 1)//2) % n)
+    return G.copy(immutable=True) if immutable else G
 
 
 def HyperStarGraph(n, k):
