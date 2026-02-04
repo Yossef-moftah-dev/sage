@@ -2625,12 +2625,19 @@ def OddGraph(n, immutable=False):
                        name=f"Odd Graph with parameter {n}")
 
 
-def PaleyGraph(q):
+def PaleyGraph(q, immutable=False):
     r"""
     Paley graph with `q` vertices.
 
     Parameter `q` must be the power of a prime number and congruent
     to 1 mod 4.
+
+    INPUT:
+
+    - ``q`` -- integer; number of vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2664,9 +2671,9 @@ def PaleyGraph(q):
         raise ValueError("parameter q must be a prime power")
     if not mod(q, 4) == 1:
         raise ValueError("parameter q must be congruent to 1 mod 4")
-    g = Graph([FiniteField(q, 'a'), lambda i, j: (i - j).is_square()],
-              loops=False, name=f"Paley graph with parameter {q}")
-    return g
+    return Graph([FiniteField(q, 'a'), lambda i, j: (i - j).is_square()],
+                 format="rule", immutable=immutable,
+                 loops=False, name=f"Paley graph with parameter {q}")
 
 
 def PasechnikGraph(n):
