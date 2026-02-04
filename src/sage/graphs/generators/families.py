@@ -2525,7 +2525,7 @@ def NKStarGraph(n, k, immutable=False):
                  immutable=immutable)
 
 
-def NStarGraph(n):
+def NStarGraph(n, immutable=False):
     r"""
     Return the `n`-star graph.
 
@@ -2536,6 +2536,9 @@ def NStarGraph(n):
     INPUT:
 
     -  ``n`` -- integer; number of symbols
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2559,18 +2562,19 @@ def NStarGraph(n):
     d = {}
     for v in Permutations(set):
         v = list(v)  # So we can easily mutate it
-        tmp_dict = {}
+        neighbors = []
         for i in range(1, n):
             if v[0] != v[i]:
                 # swap 0th and ith element
                 v[0], v[i] = v[i], v[0]
                 # convert to str and add to list
                 vert = "".join(v)
-                tmp_dict[vert] = None
+                neighbors.append(vert)
                 # swap back
                 v[0], v[i] = v[i], v[0]
-        d["".join(v)] = tmp_dict
-    return Graph(d, name=f"{n}-star")
+        d["".join(v)] = neighbors
+    return Graph(d, format="dict_of_lists", name=f"{n}-star",
+                 immutable=immutable)
 
 
 def OddGraph(n):
