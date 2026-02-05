@@ -2597,7 +2597,7 @@ def OddGraph(n, immutable=False):
 
     INPUT:
 
-    -  ``n`` -- integer; the grounset has `2n - 1` elements
+    -  ``n`` -- integer; the groundset has `2n - 1` elements
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
@@ -2617,10 +2617,10 @@ def OddGraph(n, immutable=False):
         sage: KG = graphs.OddGraph(1)
         Traceback (most recent call last):
         ...
-        ValueError: Parameter n should be an integer strictly greater than 1
+        ValueError: parameter n should be an integer strictly greater than 1
     """
     if n <= 1:
-        raise ValueError("Parameter n should be an integer strictly greater than 1")
+        raise ValueError("parameter n should be an integer strictly greater than 1")
     return KneserGraph(2*n - 1, n - 1, immutable=immutable,
                        name=f"Odd Graph with parameter {n}")
 
