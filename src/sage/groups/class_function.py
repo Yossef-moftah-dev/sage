@@ -14,6 +14,26 @@ This now goes through the libGAP library.
     Therefore the ordering of  the columns of the character table of
     a group is somewhat random.
 
+EXAMPLES::
+
+    sage: G = CyclicPermutationGroup(4)
+    sage: G.conjugacy_classes()
+    [Conjugacy class of () in Cyclic group of order 4 as a permutation group,
+     Conjugacy class of (1,2,3,4) in Cyclic group of order 4 as a permutation group,
+     Conjugacy class of (1,3)(2,4) in Cyclic group of order 4 as a permutation group,
+     Conjugacy class of (1,4,3,2) in Cyclic group of order 4 as a permutation group]
+    sage: values  = [1, -1, 1, -1]
+    sage: chi = ClassFunction(G, values); chi
+    Character of Cyclic group of order 4 as a permutation group
+
+TESTS::
+
+    sage: from sage.groups.class_function import ClassFunction_libgap
+    sage: ClassFunction_libgap(SymmetricGroup(2),[1,1])
+    doctest:warning...ClassFunction_libgap is deprecated. Please use sage.groups.class_function.ClassFunction instead.
+    See https://github.com/sagemath/sage/issues/41579 for details.
+    Character of Symmetric group of order 2! as a permutation group
+
 AUTHORS:
 
 - Franco Saliola (November 2008): initial version
@@ -34,6 +54,7 @@ from sage.structure.richcmp import richcmp, richcmp_method
 from sage.rings.integer import Integer
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
+from sage.misc.superseded import deprecated_function_alias
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
@@ -45,37 +66,6 @@ lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 # https://github.com/sagemath/sage/issues/14014 is already too long...
 
 
-def ClassFunction(group, values):
-    """
-    Construct a class function.
-
-    INPUT:
-
-    - ``group`` -- a group
-
-    - ``values`` -- list/tuple/iterable of numbers; the values of the
-      class function on the conjugacy classes, in that order
-
-    EXAMPLES::
-
-        sage: G = CyclicPermutationGroup(4)
-        sage: G.conjugacy_classes()
-        [Conjugacy class of () in Cyclic group of order 4 as a permutation group,
-         Conjugacy class of (1,2,3,4) in Cyclic group of order 4 as a permutation group,
-         Conjugacy class of (1,3)(2,4) in Cyclic group of order 4 as a permutation group,
-         Conjugacy class of (1,4,3,2) in Cyclic group of order 4 as a permutation group]
-        sage: values  = [1, -1, 1, -1]
-        sage: chi = ClassFunction(G, values); chi
-        Character of Cyclic group of order 4 as a permutation group
-    """
-    try:
-        return group.class_function(values)
-    except AttributeError:
-        pass
-
-    return ClassFunction_libgap(group, values)
-
-
 #####################################################################
 #
 #   Class function using the GAP library
@@ -84,7 +74,7 @@ def ClassFunction(group, values):
 
 
 @richcmp_method
-class ClassFunction_libgap(SageObject):
+class ClassFunction(SageObject):
     """
     A wrapper of GAP's ``ClassFunction`` function.
 
@@ -135,7 +125,7 @@ class ClassFunction_libgap(SageObject):
             sage: chi = ClassFunction(G, values);  chi
             Character of Cyclic group of order 4 as a permutation group
             sage: type(chi)
-            <class 'sage.groups.class_function.ClassFunction_libgap'>
+            <class 'sage.groups.class_function.ClassFunction'>
             sage: libgap(chi)
             ClassFunction( CharacterTable( Group([ (1,2,3,4) ]) ), [ 1, -1, 1, -1 ] )
             sage: type(_)
@@ -209,7 +199,7 @@ class ClassFunction_libgap(SageObject):
             sage: xi < chi
             True
         """
-        if isinstance(other, ClassFunction_libgap):
+        if isinstance(other, ClassFunction):
             return richcmp((self._group, self.values()),
                            (other._group, other.values()), op)
         return NotImplemented
@@ -224,11 +214,11 @@ class ClassFunction_libgap(SageObject):
             sage: values = G.gap().CharacterTable().Irr()[2].List().sage()
             sage: chi = ClassFunction(G, values)
             sage: type(chi)
-            <class 'sage.groups.class_function.ClassFunction_libgap'>
+            <class 'sage.groups.class_function.ClassFunction'>
             sage: loads(dumps(chi)) == chi
             True
         """
-        return ClassFunction_libgap, (self._group, self.values())
+        return ClassFunction, (self._group, self.values())
 
     def domain(self):
         r"""
@@ -294,7 +284,7 @@ class ClassFunction_libgap(SageObject):
             sage: s.values()
             [6, 2, -2, 0, -2]
         """
-        if not isinstance(other, ClassFunction_libgap):
+        if not isinstance(other, ClassFunction):
             raise NotImplementedError
         s = self._gap_classfunction + other._gap_classfunction
         return ClassFunction(self._group, s)
@@ -320,7 +310,7 @@ class ClassFunction_libgap(SageObject):
             sage: s.values()
             [2, 2, -2, -1, 0]
         """
-        if not isinstance(other, ClassFunction_libgap):
+        if not isinstance(other, ClassFunction):
             raise NotImplementedError
         s = self._gap_classfunction - other._gap_classfunction
         return ClassFunction(self._group, s)
@@ -365,7 +355,7 @@ class ClassFunction_libgap(SageObject):
             sage: p.values()
             [3, -1, -1, 0, 1]
         """
-        if isinstance(other, ClassFunction_libgap):
+        if isinstance(other, ClassFunction):
             p = self._gap_classfunction * other._gap_classfunction
             return ClassFunction(self._group, p)
         else:
@@ -566,7 +556,7 @@ class ClassFunction_libgap(SageObject):
             [[2, -1, 2, -1, 2, 0, 0, 0], [3, 0, 3, 0, -1, 1, 1, -1]]
         """
         L = self._gap_classfunction.ConstituentsOfCharacter()
-        return tuple(ClassFunction_libgap(self._group, ell) for ell in L)
+        return tuple(ClassFunction(self._group, ell) for ell in L)
 
     def decompose(self) -> tuple:
         r"""
@@ -765,3 +755,6 @@ class ClassFunction_libgap(SageObject):
         """
         reprs = self._group.conjugacy_classes_representatives()
         return ClassFunction(self._group, [self(x**k) for x in reprs])
+
+
+ClassFunction_libgap = deprecated_function_alias(41579, ClassFunction)
