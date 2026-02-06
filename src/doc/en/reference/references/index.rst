@@ -6449,7 +6449,7 @@ REFERENCES:
              Practice*. 3rd edition, Chapman \& Hall/CRC, 2006.
 
 .. [Stokes1990] Timothy Stokes. *Gröbner bases in exterior algebra*.
-				J. Automat. Reason. **6** (1990) 233-250.
+                J. Automat. Reason. **6** (1990) 233-250.
 
 .. [Sto1998] \A. Storjohann, An O(n^3) algorithm for Frobenius normal
              form. Proceedings of the International Symposium on
